@@ -138,7 +138,7 @@ http://localhost:8088
 ## 📸 Screenshots
 
 ### Home Page
-![Home Page](src/main/resources/static/images/screenshots/dashboard.png)
+![Home](src/main/resources/static/images/screenshots/dashboard.png)
 
 ### Login
 ![Login](screenshots/login.png)
