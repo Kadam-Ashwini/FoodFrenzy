@@ -141,19 +141,20 @@ http://localhost:8088
 ![Home](src/main/resources/static/images/screenshots/dashboard.png)
 
 ### Login
-![Login](screenshots/login.png)
+![Login](src/main/resources/static/images/screenshots/login.png)
 
 ### Admin Dashboard
-![Admin Dashboard](screenshots/admin-dashboard.png)
+![Admin Dashboard](src/main/resources/static/images/screenshots/admin-dashboard.png)
 
 ### Cart & Checkout
-![Cart](screenshots/cart.png)
-![Checkout](screenshots/checkout.png)
+![Cart](src/main/resources/static/images/screenshots/cart.png)
+![Checkout](src/main/resources/static/images/screenshots/payment.png)
 
 ### Order Tracking
-![Live Tracking](screenshots/order-tracking.png)
+![Live Tracking](src/main/resources/static/images/screenshots/live_tracking.png)
 
-
+###Feedback
+![FeedBack](src/main/resources/static/images/screenshots/feedback.png)
 ## 👥 Stakeholders
 
 | Role | Responsibilities |
