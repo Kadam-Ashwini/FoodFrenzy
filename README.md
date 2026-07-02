@@ -135,9 +135,6 @@ http://localhost:8088
 ```
 
 ---
-
-## 📸 Screenshots
-
 ## 📸 Screenshots
 
 ### Home Page
