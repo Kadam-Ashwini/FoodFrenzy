@@ -150,9 +150,6 @@ http://localhost:8088
 ![Cart](src/main/resources/static/images/screenshots/cart.png)
 ![Checkout](src/main/resources/static/images/screenshots/payment.png)
 
-### Order Tracking
-![Live Tracking](src/main/resources/static/images/screenshots/live_tracking.png)
-
 ###Feedback
 ![FeedBack](src/main/resources/static/images/screenshots/feedback.png)
 ## 👥 Stakeholders
