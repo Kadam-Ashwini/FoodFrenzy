@@ -1,0 +1,328 @@
+<!-- <!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <h2>Login</h2>
+
+      <p class="msg" th:if="${msg}" th:text="${msg}"></p>
+      <p class="error" th:if="${error}" th:text="${error}"></p>
+
+      <form method="post" th:action="@{/login}">
+        <input name="email" type="email" placeholder="Email" required />
+        <input name="password" type="password" placeholder="Password" required />
+        <button class="btn btn-solid w100" type="submit">Login</button>
+      </form>
+
+      <p class="small">
+        New user? <a th:href="@{/register}">Create Account</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html> -->
+
+<!-- 
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="auth-page">
+
+  Simple top bar (optional)
+  <div class="auth-top">
+    <a class="brand" th:href="@{/}">
+      <img th:src="@{/images/logo.png}" alt="Logo">
+      <span>FoodFrenzy</span>
+    </a>
+    <a class="btn btn-outline" th:href="@{/}">Home</a>
+  </div>
+
+  <div class="auth-shell">
+    Left side
+    <div class="auth-left">
+      <h1>Welcome back</h1>
+      <p>Login to order food, track orders, and join group orders.</p>
+
+      Optional image (add file if you want)
+      <img class="auth-illustration" th:src="@{/images/auth/login-banner.png}" alt="Banner"
+           onerror="this.style.display='none'">
+    </div>
+
+    Right side (form)
+    <div class="auth-right">
+      <div class="auth-card2">
+        <h2>Login</h2>
+
+        <p class="msg" th:if="${msg}" th:text="${msg}"></p>
+        <p class="error" th:if="${error}" th:text="${error}"></p>
+
+        <form method="post" th:action="@{/login}" class="auth-form2">
+          <div class="field">
+            <label>Email</label>
+            <input name="email" type="email" placeholder="Enter your email" required />
+          </div>
+
+          <div class="field">
+            <label>Password</label>
+            <div class="pass-wrap">
+              <input id="pwd" name="password" type="password" placeholder="Enter your password" required />
+              <button class="pass-toggle" type="button" onclick="togglePwd()">Show</button>
+            </div>
+          </div>
+
+          <button class="btn btn-solid w100" type="submit">Login</button>
+        </form>
+
+        <div class="auth-links">
+          <span class="muted">New user?</span>
+          <a th:href="@{/register}">Create Account</a>
+        </div>
+
+        <div class="hint">
+          <div class="muted">Admin login (demo):</div>
+          <div><b>admin@gmail.com</b> / <b>admin123</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  function togglePwd(){
+    const el = document.getElementById('pwd');
+    const btn = document.querySelector('.pass-toggle');
+    if(el.type === 'password'){
+      el.type = 'text';
+      btn.innerText = 'Hide';
+    } else {
+      el.type = 'password';
+      btn.innerText = 'Show';
+    }
+  }
+</script>
+
+</body>
+</html> -->
+
+
+
+<!-- 
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="auth-page">
+
+  Top bar
+  <div class="auth-top">
+    <a class="brand" th:href="@{/}">
+      <img th:src="@{/images/logo.png}" alt="Logo">
+      <span>FoodFrenzy</span>
+    </a>
+    <a class="btn btn-outline" th:href="@{/}">Home</a>
+  </div>
+
+  <div class="auth-shell">
+    Left side
+    <div class="auth-left">
+      <h1>Welcome back</h1>
+      <p>Login to order food, track orders, and join group orders.</p>
+
+      Banner image (add this file to static): /images/auth/login-banner.png
+      <img class="auth-illustration"
+           th:src="@{/images/login-banner.png}"
+           alt="Login banner"
+           onerror="this.style.display='none'">
+    </div>
+
+    Right side
+    <div class="auth-right">
+      <div class="auth-card2">
+        <h2>Login</h2>
+
+        <p class="msg" th:if="${msg}" th:text="${msg}"></p>
+        <p class="error" th:if="${error}" th:text="${error}"></p>
+
+        <form method="post" th:action="@{/login}" class="auth-form2">
+          <div class="field">
+            <label>Email</label>
+            <input name="email" type="email" placeholder="Enter your email" required />
+          </div>
+
+          <div class="field">
+            <label>Password</label>
+            <div class="pass-wrap">
+              <input id="pwd" name="password" type="password" placeholder="Enter your password" required />
+              <button class="pass-toggle" type="button" onclick="togglePwd()">Show</button>
+            </div>
+          </div>
+
+          <button class="btn btn-solid w100" type="submit">Login</button>
+        </form>
+
+        <div class="auth-links">
+          <span class="muted">New user?</span>
+          <a th:href="@{/register}">Create Account</a>
+        </div>
+
+        <div class="hint">
+          <div class="muted">Admin login (demo):</div>
+          <div><b>admin@gmail.com</b> / <b>admin123</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  function togglePwd(){
+    const el = document.getElementById('pwd');
+    const btn = document.querySelector('.pass-toggle');
+    if(el.type === 'password'){
+      el.type = 'text';
+      btn.innerText = 'Hide';
+    } else {
+      el.type = 'password';
+      btn.innerText = 'Show';
+    }
+  }
+</script>
+
+</body>
+</html> -->
+
+
+
+
+<!-- FILE: src/main/resources/templates/login.html -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="auth-page"> 
+<!-- <body class="auth-page home-bg"> -->
+  <!-- Top bar -->
+  <div class="auth-top">
+    <a class="brand" th:href="@{/}">
+      <img th:src="@{/images/logo.png}" alt="Logo">
+      <span>FoodFrenzy</span>
+    </a>
+    <a class="btn btn-outline" th:href="@{/}">Home</a>
+  </div>
+
+  <div class="auth-shell">
+    <!-- Left side -->
+    <div class="auth-left">
+      <h1>Welcome back</h1>
+      <p>Login to order food, track orders, and join group orders.</p>
+
+      <img class="auth-illustration"
+           th:src="@{/images/login-banner.png}"
+           alt="Login banner"
+           onerror="this.style.display='none'">
+    </div>
+
+    <!-- Right side -->
+    <div class="auth-right">
+      <div class="auth-card2">
+        <h2>Login</h2>
+
+        <p class="msg" th:if="${msg}" th:text="${msg}"></p>
+        <p class="error" th:if="${error}" th:text="${error}"></p>
+
+        <!-- ✅ HTML-only validation using required / minlength / pattern / oninvalid -->
+        <form method="post" th:action="@{/login}" class="auth-form2" autocomplete="on">
+
+          <div class="field">
+            <label for="email">Email</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="Enter your email"
+              required
+              maxlength="120"
+              autocomplete="username"
+              inputmode="email"
+              autocapitalize="none"
+              spellcheck="false"
+              oninvalid="this.setCustomValidity('Please enter a valid email address')"
+              oninput="this.setCustomValidity('')"
+            />
+            <div class="muted" style="margin-top:6px;">Example: user@gmail.com</div>
+          </div>
+
+          <div class="field">
+            <label for="pwd">Password</label>
+
+            <div class="pass-wrap">
+              <input
+                id="pwd"
+                name="password"
+                type="password"
+                placeholder="Enter your password"
+                required
+                minlength="6"
+                maxlength="60"
+                autocomplete="current-password"
+                pattern="(?=.*[A-Za-z])(?=.*\d).{6,}"
+                title="Password must be at least 6 characters and contain at least 1 letter and 1 number."
+                oninvalid="this.setCustomValidity('Password must be at least 6 characters and contain at least 1 letter and 1 number')"
+                oninput="this.setCustomValidity('')"
+              />
+              <button class="pass-toggle" type="button" onclick="togglePwd()">Show</button>
+            </div>
+
+            <div class="muted" style="margin-top:6px;">
+              Min 6 chars, must contain 1 letter + 1 number (example: admin123)
+            </div>
+          </div>
+
+          <button class="btn btn-solid w100" type="submit">Login</button>
+        </form>
+
+        <div class="auth-links">
+          <span class="muted">New user?</span>
+          <a th:href="@{/register}">Create Account</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+<script>
+  function togglePwd(){
+    const el = document.getElementById('pwd');
+    const btn = document.querySelector('.pass-toggle');
+    if(el.type === 'password'){
+      el.type = 'text';
+      btn.innerText = 'Hide';
+    } else {
+      el.type = 'password';
+      btn.innerText = 'Show';
+    }
+  }
+</script>
+
+</body>
+</html>

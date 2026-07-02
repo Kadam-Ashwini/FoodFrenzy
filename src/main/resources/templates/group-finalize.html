@@ -1,0 +1,136 @@
+<!-- <!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="'Finalize Group - ' + ${group.code}">Finalize Group</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="navbar">
+  <div class="logo">
+    <img th:src="@{/images/logo.png}" alt="Logo">
+    <span>FoodFrenzy</span>
+  </div>
+  <div class="nav-actions">
+    <a class="btn btn-outline" th:href="@{/group/{code}(code=${group.code})}">Back</a>
+  </div>
+</header>
+
+<div class="section">
+  <h2 th:text="'Finalize Group Order - ' + ${group.code}">Finalize</h2>
+  <p class="muted">Host will place and pay for the order.</p>
+
+  <div class="checkout-wrap">
+    <div class="checkout-left">
+      <h3>Delivery Details</h3>
+
+      <form th:action="@{/group/{code}/finalize(code=${group.code})}" method="post" class="checkout-form">
+        <label class="muted">City</label>
+        <select name="city" required>
+          <option value="">Select City</option>
+          <option th:each="c : ${cities}" th:value="${c}" th:text="${c}"></option>
+        </select>
+
+        <label class="muted">Delivery Address</label>
+        <textarea name="deliveryAddress" rows="4" placeholder="House no, street, area..." required></textarea>
+
+        <button class="btn btn-solid" type="submit">Finalize & Pay</button>
+      </form>
+    </div>
+
+    <div class="checkout-right">
+      <h3>Group Summary</h3>
+      <p class="muted">Restaurant: <b th:text="${group.restaurant.name}">Restaurant</b></p>
+
+      <div class="summary-list">
+        <div class="summary-row" th:each="gi : ${items}">
+          <div>
+            <b th:text="${gi.foodItem.name}">Item</b>
+            <div class="muted" th:text="'Added by: ' + ${gi.addedBy.fullName}">User</div>
+            <div class="muted" th:text="'Qty: ' + ${gi.quantity}">Qty</div>
+          </div>
+          <div>₹<b th:text="${gi.lineTotal}">0</b></div>
+        </div>
+      </div>
+
+      <div class="sum-row" style="margin-top:12px;">
+        <span>Total</span>
+        <span>₹<b th:text="${total}">0</b></span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html> -->
+
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="'Finalize Group - ' + ${group.code}">Finalize Group</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+  <!-- Common Navbar -->
+  <div th:replace="~{fragments/navbar :: appNavbar}"></div>
+
+  <div class="section">
+    <div class="actions" style="margin-bottom:12px;">
+      <a class="btn btn-outline" th:href="@{/group/{code}(code=${group.code})}">Back to Group</a>
+    </div>
+
+    <h2 th:text="'Finalize Group Order - ' + ${group.code}">Finalize</h2>
+    <p class="muted">Host will place and pay for the order.</p>
+
+    <div class="checkout-wrap">
+      <div class="checkout-left">
+        <h3>Delivery Details</h3>
+
+        <form th:action="@{/group/{code}/finalize(code=${group.code})}" method="post" class="checkout-form">
+          <label class="muted">City</label>
+          <select name="city" required>
+            <option value="">Select City</option>
+            <option th:each="c : ${cities}" th:value="${c}" th:text="${c}"></option>
+          </select>
+
+          <label class="muted">Delivery Address</label>
+          <textarea name="deliveryAddress" rows="4" placeholder="House no, street, area..." required></textarea>
+
+          <button class="btn btn-solid" type="submit">Finalize & Pay</button>
+        </form>
+      </div>
+
+      <div class="checkout-right">
+        <h3>Group Summary</h3>
+        <p class="muted">Restaurant: <b th:text="${group.restaurant.name}">Restaurant</b></p>
+
+        <div class="summary-list">
+          <div class="summary-row" th:each="gi : ${items}">
+            <div>
+              <b th:text="${gi.foodItem.name}">Item</b>
+              <div class="muted" th:text="'Added by: ' + ${gi.addedBy.fullName}">User</div>
+              <div class="muted" th:text="'Qty: ' + ${gi.quantity}">Qty</div>
+            </div>
+            <div>₹<b th:text="${gi.lineTotal}">0</b></div>
+          </div>
+        </div>
+
+        <div class="sum-row" style="margin-top:12px;">
+          <span>Total</span>
+          <span>₹<b th:text="${total}">0</b></span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

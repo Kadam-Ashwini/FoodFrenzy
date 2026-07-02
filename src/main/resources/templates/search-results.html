@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Search</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="navbar">
+  <div class="logo">
+    <img th:src="@{/images/logo.png}" alt="Logo">
+    <span>FoodFrenzy</span>
+  </div>
+  <div class="nav-actions">
+    <a class="btn btn-outline" th:href="@{/}">Home</a>
+    <a class="btn btn-outline" th:href="@{/cart}" th:if="${session.userName != null}">Cart</a>
+  </div>
+</header>
+
+<div class="section">
+  <h2>Search</h2>
+
+  <form class="search-bar" th:action="@{/search}" method="get" style="margin-top:10px;">
+    <input type="text" name="q" th:value="${q}" placeholder="Search food or restaurant..." />
+    <button type="submit">Search</button>
+  </form>
+
+  <p class="muted" th:if="${msg}" th:text="${msg}" style="margin-top:10px;"></p>
+
+  <hr class="hr">
+
+  <h3>Restaurants</h3>
+  <div class="muted" th:if="${#lists.isEmpty(restaurants)}" style="margin-top:8px;">No restaurants found.</div>
+
+  <div class="grid" th:if="${!#lists.isEmpty(restaurants)}">
+    <a class="card-link" th:each="r : ${restaurants}" th:href="@{/restaurants/{id}(id=${r.id})}">
+      <div class="card">
+        <img class="card-img"
+             th:src="${(r.imageUrl != null and !#strings.isEmpty(r.imageUrl)) ? r.imageUrl : '/images/default-restaurant.jpg'}"
+             alt="Restaurant">
+        <div class="card-body">
+          <h3 th:text="${r.name}">Restaurant</h3>
+          <p class="muted" th:text="${r.city}">City</p>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <hr class="hr">
+
+  <h3>Food Items</h3>
+  <div class="muted" th:if="${#lists.isEmpty(foods)}" style="margin-top:8px;">No food items found.</div>
+
+  <div class="grid" th:if="${!#lists.isEmpty(foods)}">
+    <a class="card-link" th:each="f : ${foods}" th:href="@{/restaurants/{id}(id=${f.restaurant.id})}">
+      <div class="card">
+        <img class="card-img"
+             th:src="${(f.imageUrl != null and !#strings.isEmpty(f.imageUrl)) ? f.imageUrl : '/images/default-food.jpg'}"
+             alt="Food">
+        <div class="card-body">
+          <h3 th:text="${f.name}">Food</h3>
+          <p class="muted" th:text="${f.category}">Category</p>
+          <p class="muted" th:text="'Restaurant: ' + ${f.restaurant.name}">Restaurant</p>
+          <p style="margin-top:6px;">₹<b th:text="${f.price}">0</b></p>
+        </div>
+      </div>
+    </a>
+  </div>
+
+</div>
+
+</body>
+</html>

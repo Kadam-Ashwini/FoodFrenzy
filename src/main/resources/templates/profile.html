@@ -1,0 +1,250 @@
+<!-- <!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Profile</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: appNavbar}"></div>
+
+<div class="section">
+  <h2>My Profile</h2>
+
+  <p class="msg" th:if="${param.ok}" th:text="${param.ok[0]}"></p>
+  <p class="error" th:if="${param.msg}" th:text="${param.msg[0]}"></p>
+
+  <div class="two-col">
+    LEFT: PROFILE
+    <div class="panel">
+      <h3>Profile Details</h3>
+
+      <form th:action="@{/profile/update}" method="post" class="profile-form">
+        CSRF (only if Spring Security is enabled)
+        <input type="hidden" th:if="${_csrf != null}"
+               th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+        <label class="muted">Full Name</label>
+        <input name="fullName" type="text" th:value="${user.fullName}" required>
+
+        <label class="muted">Email (readonly)</label>
+        <input type="text" th:value="${user.email}" readonly>
+
+        <label class="muted">Phone</label>
+        <input name="phone" type="text" th:value="${user.phone}" required>
+
+        <button class="btn btn-solid" type="submit">Update Profile</button>
+      </form>
+    </div>
+
+    RIGHT: ADDRESSES
+    <div class="panel">
+      <div class="actions" style="justify-content: space-between;">
+        <h3 style="margin:0;">Saved Addresses</h3>
+        <a class="btn btn-solid" th:href="@{/profile/address/new}">+ Add Address</a>
+      </div>
+
+      <div class="muted" th:if="${#lists.isEmpty(addresses)}" style="margin-top:10px;">
+        No addresses saved yet.
+      </div>
+
+      <div th:if="${!#lists.isEmpty(addresses)}" class="addr-list">
+        <div class="addr-card" th:each="a : ${addresses}">
+          <div>
+            <b th:text="${a.label}">Home</b>
+            because your getter is isDefault(), thymeleaf property is "default"
+            <span class="badge" th:if="${a.default}" style="margin-left:8px;">Default</span>
+
+            <div class="muted"
+                 th:text="${a.city + (!#strings.isEmpty(a.area) ? ' - ' + a.area : '')}">
+              City
+            </div>
+
+            <div th:text="${a.addressLine}">Address</div>
+
+            <div class="muted" th:if="${!#strings.isEmpty(a.pincode)}"
+                 th:text="'Pincode: ' + a.pincode">
+              Pin
+            </div>
+          </div>
+
+          <div class="actions" style="margin-top:10px; gap:8px; flex-wrap:wrap;">
+            Edit
+            <a class="btn btn-outline"
+               th:href="@{/profile/address/edit/{id}(id=${a.id})}">
+              Edit
+            </a>
+
+            Set Default (show only if not already default)
+            <form th:if="${!a.default}"
+                  th:action="@{/profile/address/default/{id}(id=${a.id})}"
+                  method="post" style="display:inline;">
+              <input type="hidden" th:if="${_csrf != null}"
+                     th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+              <button class="btn btn-solid" type="submit">Set Default</button>
+            </form>
+
+            Delete
+            <form th:action="@{/profile/address/delete/{id}(id=${a.id})}"
+                  method="post" style="display:inline;"
+                  onsubmit="return confirm('Delete this address?');">
+              <input type="hidden" th:if="${_csrf != null}"
+                     th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+              <button class="btn btn-outline" type="submit">Delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html> -->
+
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Profile</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="profile-bg">
+
+<div th:replace="~{fragments/navbar :: appNavbar}"></div>
+
+<div class="section profilePage">
+
+  <!-- Page Head -->
+  <div class="profileHead">
+    <div>
+      <h2 style="margin-bottom:6px;">My Profile</h2>
+      <div class="muted">Manage your account and delivery addresses.</div>
+    </div>
+
+    <a class="btn btn-outline" th:href="@{/}">Home</a>
+  </div>
+
+  <p class="msg" th:if="${param.ok}" th:text="${param.ok[0]}"></p>
+  <p class="error" th:if="${param.msg}" th:text="${param.msg[0]}"></p>
+
+  <!-- Centered grid -->
+  <div class="profileGrid">
+
+    <!-- LEFT: Profile card -->
+    <div class="profileCard">
+      <div class="profileCardHead">
+        <div class="avatarCircle" th:text="${#strings.substring(user.fullName,0,1)}">U</div>
+        <div>
+          <div class="pName" th:text="${user.fullName}">User</div>
+          <div class="muted" th:text="${user.email}">email</div>
+        </div>
+      </div>
+
+      <div class="profileDivider"></div>
+
+      <form th:action="@{/profile/update}" method="post" class="profileForm">
+        <input type="hidden" th:if="${_csrf != null}"
+               th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+        <div class="fieldP">
+          <label class="muted">Full Name</label>
+          <input name="fullName" type="text" th:value="${user.fullName}" required>
+        </div>
+
+        <div class="fieldP">
+          <label class="muted">Email (readonly)</label>
+          <input type="text" th:value="${user.email}" readonly>
+        </div>
+
+        <div class="fieldP">
+          <label class="muted">Phone</label>
+          <input name="phone" type="text" th:value="${user.phone}" required>
+        </div>
+
+        <button class="btn btn-solid w100" type="submit">Update Profile</button>
+      </form>
+    </div>
+
+    <!-- RIGHT: Address card -->
+    <!-- <div class="profileCard">
+      <div class="addressHead">
+        <div>
+          <div class="cardTitleX">
+            <span class="cardIconX">🏠</span>
+            <span>Saved Addresses</span>
+          </div>
+          <div class="muted">Use default address for faster checkout.</div>
+        </div>
+
+        <a class="btn btn-solid btn-sm" th:href="@{/profile/address/new}">+ Add</a>
+      </div>
+
+      <div class="profileDivider"></div> -->
+
+      <!-- Empty -->
+      <!-- <div class="addressEmpty" th:if="${#lists.isEmpty(addresses)}">
+        <div class="addressEmptyTitle">No addresses saved</div>
+        <div class="muted">Add Home/Work address to checkout faster.</div>
+        <a class="btn btn-outline" th:href="@{/profile/address/new}" style="margin-top:10px;">Add Address</a>
+      </div> -->
+
+      <!-- List -->
+      <div class="addrList" th:if="${!#lists.isEmpty(addresses)}">
+        <div class="addrCard" th:each="a : ${addresses}">
+          <div class="addrTop">
+            <div>
+              <b th:text="${a.label}">Home</b>
+              <span class="badge" th:if="${a.default}" style="margin-left:8px;">Default</span>
+
+              <div class="muted"
+                   th:text="${a.city + (!#strings.isEmpty(a.area) ? ' - ' + a.area : '')}">
+                City
+              </div>
+            </div>
+          </div>
+
+          <!-- <div class="addrLine" th:text="${a.addressLine}">Address</div>
+ -->
+          <div class="muted" th:if="${!#strings.isEmpty(a.pincode)}"
+               th:text="'Pincode: ' + a.pincode">Pin</div>
+
+          <div class="addrActions">
+            <a class="btn btn-outline btn-sm"
+               th:href="@{/profile/address/edit/{id}(id=${a.id})}">
+              Edit
+            </a>
+
+            <form th:if="${!a.default}"
+                  th:action="@{/profile/address/default/{id}(id=${a.id})}"
+                  method="post" style="display:inline;">
+              <input type="hidden" th:if="${_csrf != null}"
+                     th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+              <button class="btn btn-solid btn-sm" type="submit">Set Default</button>
+            </form>
+
+            <form th:action="@{/profile/address/delete/{id}(id=${a.id})}"
+                  method="post" style="display:inline;"
+                  onsubmit="return confirm('Delete this address?');">
+              <input type="hidden" th:if="${_csrf != null}"
+                     th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+              <button class="btn btn-outline btn-sm" type="submit">Delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

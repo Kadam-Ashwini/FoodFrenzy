@@ -1,0 +1,332 @@
+<!-- <!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin - Orders</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="section">
+  <h2>All Orders (Admin)</h2>
+
+  <div class="actions" style="margin-bottom:12px;">
+    <a class="btn btn-outline" th:href="@{/admin/dashboard}">Back</a>
+    <a class="btn btn-outline" th:href="@{/logout}">Logout</a>
+  </div>
+
+  <div class="table">
+    <div class="trow thead">
+      <div>ID</div>
+      <div>User</div>
+      <div>Restaurant</div>
+      <div>Total</div>
+      <div>Status</div>
+      <div>Update</div>
+    </div>
+
+    <div class="trow" th:each="o : ${orders}">
+      <div th:text="${o.id}">1</div>
+      <div th:text="${o.user.fullName}">User</div>
+      <div th:text="${o.restaurant.name}">Restaurant</div>
+      <div>₹<b th:text="${o.totalAmount}">0</b></div>
+      <div><span class="badge" th:text="${o.status}">CREATED</span></div>
+      <div>
+        <form th:action="@{/admin/orders/{id}/status(id=${o.id})}" method="post" style="display:flex; gap:8px;">
+          <select name="status">
+            <option th:each="s : ${statuses}"
+                    th:value="${s}"
+                    th:text="${s}"
+                    th:selected="${s == o.status}">
+            </option>
+          </select>
+          <button class="btn btn-solid" type="submit">Save</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html> -->
+
+
+
+<!-- 
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin - Orders</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="section">
+  <h2>All Orders (Admin)</h2>
+
+  <div class="actions" style="margin-bottom:12px;">
+    <a class="btn btn-outline" th:href="@{/admin/dashboard}">Back</a>
+    <a class="btn btn-outline" th:href="@{/logout}">Logout</a>
+  </div>
+
+  Filters
+  <form class="filter-bar" th:action="@{/admin/orders}" method="get">
+    <select name="status">
+      <option value="">All Status</option>
+      <option th:each="s : ${statuses}"
+              th:value="${s}"
+              th:text="${s}"
+              th:selected="${selectedStatus != null and s == selectedStatus}">
+      </option>
+    </select>
+
+    <input type="date" name="from" th:value="${from}">
+    <input type="date" name="to" th:value="${to}">
+
+    <button class="btn btn-solid" type="submit">Apply</button>
+    <a class="btn btn-outline" th:href="@{/admin/orders}">Reset</a>
+  </form>
+
+  <div class="table">
+    <div class="trow thead" style="grid-template-columns: 90px 1.3fr 1.1fr 120px 160px 160px 220px;">
+      <div>ID</div>
+      <div>User</div>
+      <div>Restaurant</div>
+      <div>Total</div>
+      <div>Payment</div>
+      <div>Status</div>
+      <div>Action</div>
+    </div>
+
+    <div class="trow" th:each="o : ${orders}"
+         style="grid-template-columns: 90px 1.3fr 1.1fr 120px 160px 160px 220px;">
+      <div th:text="${o.id}">1</div>
+      <div th:text="${o.user.fullName}">User</div>
+      <div th:text="${o.restaurant.name}">Restaurant</div>
+      <div>₹<b th:text="${o.totalAmount}">0</b></div>
+      <div><span class="badge" th:text="${o.paymentStatus}">PENDING</span></div>
+      <div><span class="badge" th:text="${o.status}">CREATED</span></div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <a class="btn btn-outline" th:href="@{/admin/orders/{id}(id=${o.id})}">View</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html> -->
+<!-- 
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin - Orders</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="section">
+  <h2>All Orders (Admin)</h2>
+
+  <div class="actions" style="margin-bottom:12px;">
+    <a class="btn btn-outline" th:href="@{/admin/dashboard}">Back</a>
+    <a class="btn btn-outline" th:href="@{/logout}">Logout</a>
+  </div>
+
+  <form class="filter-bar" th:action="@{/admin/orders}" method="get">
+    <select name="status">
+      <option value="">All Status</option>
+      <option th:each="s : ${statuses}"
+              th:value="${s}"
+              th:text="${s}"
+              th:selected="${selectedStatus != null and s == selectedStatus}">
+      </option>
+    </select>
+
+    <input type="date" name="from" th:value="${from}">
+    <input type="date" name="to" th:value="${to}">
+
+    <button class="btn btn-solid" type="submit">Apply</button>
+    <a class="btn btn-outline" th:href="@{/admin/orders}">Reset</a>
+  </form>
+
+  <div class="table">
+    <div class="trow thead" style="grid-template-columns: 90px 1.3fr 1.1fr 120px 160px 160px 220px;">
+      <div>ID</div>
+      <div>User</div>
+      <div>Restaurant</div>
+      <div>Total</div>
+      <div>Payment</div>
+      <div>Status</div>
+      <div>Action</div>
+    </div>
+
+    <div class="trow" th:each="o : ${orders}"
+         style="grid-template-columns: 90px 1.3fr 1.1fr 120px 160px 160px 220px;">
+      <div th:text="${o.id}">1</div>
+      <div th:text="${o.user.fullName}">User</div>
+      <div th:text="${o.restaurant.name}">Restaurant</div>
+      <div>₹<b th:text="${o.totalAmount}">0</b></div>
+      <div><span class="badge" th:text="${o.paymentStatus}">PENDING</span></div>
+      <div><span class="badge" th:text="${o.status}">CREATED</span></div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <a class="btn btn-outline" th:href="@{/admin/orders/{id}(id=${o.id})}">View</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html> -->
+
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin - Orders</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="admin-bg">
+
+<div class="section">
+
+  <!-- HERO -->
+  <div class="adminFormHero">
+    <div class="adminFormHero-left">
+      <div class="adminFormCrumb">
+        <a th:href="@{/admin/dashboard}">Admin</a>
+        <span> / </span>
+        <span>Orders</span>
+      </div>
+
+      <div class="adminFormTitleRow">
+        <div class="adminFormIcon">📦</div>
+        <div>
+          <h2 class="adminFormTitle">All Orders (Admin)</h2>
+          <div class="adminFormSubtitle muted">
+            Filter orders by status and date range. Click view for details & delivery assignment.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="adminFormHero-actions">
+      <a class="btn btn-outline" th:href="@{/admin/dashboard}">Back</a>
+      <a class="btn btn-solid" th:href="@{/logout}">Logout</a>
+    </div>
+  </div>
+
+  <!-- FILTER CARD -->
+  <div class="adminFilterCard">
+    <form class="adminFilterRow" th:action="@{/admin/orders}" method="get">
+
+      <div class="fGroup">
+        <label class="muted">Status</label>
+        <select name="status">
+          <option value="">All Status</option>
+          <option th:each="s : ${statuses}"
+                  th:value="${s}"
+                  th:text="${s}"
+                  th:selected="${selectedStatus != null and s == selectedStatus}">
+          </option>
+        </select>
+      </div>
+
+      <div class="fGroup">
+        <label class="muted">From</label>
+        <input type="date" name="from" th:value="${from}">
+      </div>
+
+      <div class="fGroup">
+        <label class="muted">To</label>
+        <input type="date" name="to" th:value="${to}">
+      </div>
+
+      <div class="fActions">
+        <button class="btn btn-solid" type="submit">Apply</button>
+        <a class="btn btn-outline" th:href="@{/admin/orders}">Reset</a>
+      </div>
+    </form>
+
+    <div class="muted" style="margin-top:10px;">
+      Tip: You can assign delivery boy and update status inside “View”.
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="adminTableCard">
+    <div class="adminTableHead">
+      <div class="muted">Orders</div>
+      <div class="muted" th:text="'Showing: ' + ${#lists.size(orders)}">Showing: 0</div>
+    </div>
+
+    <div class="adminOrdersTable">
+      <div class="trow thead" style="grid-template-columns: 90px 1.2fr 1.1fr 120px 160px 180px 140px;">
+        <div>ID</div>
+        <div>User</div>
+        <div>Restaurant</div>
+        <div>Total</div>
+        <div>Payment</div>
+        <div>Status</div>
+        <div>Action</div>
+      </div>
+
+      <div class="trow adminOrderRow"
+           th:each="o : ${orders}"
+           style="grid-template-columns: 90px 1.2fr 1.1fr 120px 160px 180px 140px;">
+
+        <div class="oid" th:text="${o.id}">1</div>
+
+        <div>
+          <div style="font-weight:1000;" th:text="${o.user.fullName}">User</div>
+          <div class="muted" th:text="${o.user.email}">email</div>
+        </div>
+
+        <div>
+          <div style="font-weight:1000;" th:text="${o.restaurant.name}">Restaurant</div>
+          <div class="muted" th:text="${o.city}">City</div>
+        </div>
+
+        <div>₹<b th:text="${o.totalAmount}">0</b></div>
+
+        <div>
+          <span class="pill pay"
+                th:classappend="' pay-' + ${#strings.toLowerCase(o.paymentStatus.name())}"
+                th:text="${o.paymentStatus}">
+            PENDING
+          </span>
+          <div class="muted" th:if="${o.paymentMethod != null}"
+               th:text="${o.paymentMethod}">COD</div>
+        </div>
+
+        <div>
+          <span class="pill st"
+                th:classappend="' status-' + ${#strings.toLowerCase(o.status.name())}"
+                th:text="${o.status}">
+            CREATED
+          </span>
+          <div class="muted" th:text="${#temporals.format(o.createdAt, 'dd MMM, hh:mm a')}">date</div>
+        </div>
+
+        <div>
+          <a class="btn btn-outline btn-sm" th:href="@{/admin/orders/{id}(id=${o.id})}">View</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

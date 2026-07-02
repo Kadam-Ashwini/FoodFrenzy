@@ -1,0 +1,161 @@
+<!-- <!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<header class="navbar" th:fragment="appNavbar">
+  <div class="logo">
+    <img th:src="@{/images/logo.png}" alt="Logo">
+    <span>FoodFrenzy</span>
+  </div>
+
+  <div class="nav-actions">
+    <a class="btn btn-outline" th:href="@{/}">Home</a>
+
+    User quick links
+    <a class="btn btn-outline" th:if="${session.userName != null}" th:href="@{/cart}">Cart</a>
+    <a class="btn btn-outline" th:if="${session.userName != null}" th:href="@{/orders}">My Orders</a>
+    <a class="btn btn-outline" th:if="${session.userName != null}" th:href="@{/group}">Group Order</a>
+
+    Admin
+    <a class="btn btn-solid" th:if="${session.role == 'ADMIN'}" th:href="@{/admin/dashboard}">
+      Admin Panel
+    </a>
+
+    Guest
+    <div class="auth-buttons" th:if="${session.userName == null}">
+      <a class="btn btn-outline" th:href="@{/login}">Login</a>
+      <a class="btn btn-solid" th:href="@{/register}">Create Account</a>
+    </div>
+
+    Logged-in
+    <div class="auth-buttons user-area" th:if="${session.userName != null}">
+      <span class="hello">Hello, <b th:text="${session.userName}">User</b></span>
+      <a class="btn btn-outline" th:href="@{/logout}">Logout</a>
+    </div>
+  </div>
+</header>
+
+</body>
+</html> -->
+
+
+
+<!-- 
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<header class="navbar" th:fragment="appNavbar">
+  <div class="logo">
+    <img th:src="@{/images/logo.png}" alt="Logo">
+    <span>FoodFrenzy</span>
+  </div>
+
+  <div class="nav-actions">
+    <a class="btn btn-outline" th:href="@{/}">Home</a>
+
+    Location dropdown (ONLY Home page because showLocation=true only on home)
+    <div class="location" th:if="${showLocation != null and showLocation}">
+      <label for="city">Location:</label>
+      <select id="city" name="city">
+        <option value="">Select City</option>
+        <option th:each="c : ${cities}" th:value="${c}" th:text="${c}"></option>
+      </select>
+    </div>
+
+    User quick links
+    <a class="btn btn-outline" th:if="${session.userName != null}" th:href="@{/cart}">Cart</a>
+    <a class="btn btn-outline" th:if="${session.userName != null}" th:href="@{/orders}">My Orders</a>
+    <a class="btn btn-outline" th:if="${session.userName != null}" th:href="@{/group}">Group Order</a>
+
+    Admin
+    <a class="btn btn-solid" th:if="${session.role == 'ADMIN'}" th:href="@{/admin/dashboard}">
+      Admin Panel
+    </a>
+
+    Guest
+    <div class="auth-buttons" th:if="${session.userName == null}">
+      <a class="btn btn-outline" th:href="@{/login}">Login</a>
+      <a class="btn btn-solid" th:href="@{/register}">Create Account</a>
+    </div>
+
+    Logged-in
+    <div class="auth-buttons user-area" th:if="${session.userName != null}">
+      <span class="hello">Hello, <b th:text="${session.userName}">User</b></span>
+      <a class="btn btn-outline" th:href="@{/logout}">Logout</a>
+    </div>
+  </div>
+</header>
+
+</body>
+</html> -->
+
+
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<header class="navbar" th:fragment="appNavbar">
+
+  <!-- Logo as link -->
+  <a class="logo" th:href="@{/}" style="text-decoration:none; color:inherit;">
+    <img th:src="@{/images/logo.png}" alt="Logo">
+    <span>FoodFrenzy</span>
+  </a>
+
+  <!-- Mobile menu button (works with the updated style.css I gave) -->
+ <!--  <button class="btn btn-outline nav-toggle"
+          type="button"
+          onclick="toggleNav(this)">
+    Menu
+  </button>
+ -->
+  <div class="nav-actions" id="navActions">
+    <a class="btn btn-outline" th:href="@{/}">Home</a>
+
+    <!-- Location dropdown (Home page only) -->
+    <div class="location" th:if="${showLocation != null and showLocation}">
+      <label for="city">Location:</label>
+      <select id="city" name="city">
+        <option value="">Select City</option>
+        <option th:each="c : ${cities}" th:value="${c}" th:text="${c}"></option>
+      </select>
+    </div>
+
+    <!-- User quick links -->
+    <a class="btn btn-outline" th:if="${session.userName != null}" th:href="@{/cart}">Cart</a>
+    <a class="btn btn-outline" th:if="${session.userName != null}" th:href="@{/orders}">My Orders</a>
+    <!--  <a class="btn btn-outline" th:if="${session.userName != null}" th:href="@{/group}">Group Order</a>-->
+    <a class="btn btn-outline" th:if="${session.userName != null}" th:href="@{/profile}">Profile</a>
+
+    <!-- Admin -->
+    <a class="btn btn-solid" th:if="${session.role == 'ADMIN'}" th:href="@{/admin/dashboard}">
+      Admin Panel
+    </a>
+
+    <!-- Guest -->
+    <div class="auth-buttons" th:if="${session.userName == null}">
+      <a class="btn btn-outline" th:href="@{/login}">Login</a>
+      <a class="btn btn-solid" th:href="@{/register}">Create Account</a>
+    </div>
+
+    <!-- Logged-in -->
+    <div class="auth-buttons user-area" th:if="${session.userName != null}">
+      <span class="hello">Hello, <b th:text="${session.userName}">User</b></span>
+      <a class="btn btn-outline" th:href="@{/logout}">Logout</a>
+    </div>
+  </div>
+</header>
+
+<script>
+  function toggleNav(btn){
+    const header = btn.closest("header.navbar");
+    header.classList.toggle("open");
+  }
+</script>
+
+</body>
+</html>

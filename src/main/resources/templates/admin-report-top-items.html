@@ -1,0 +1,181 @@
+<!-- <!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Top Selling Items</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="section">
+  <h2>Top Selling Food Items (PAID)</h2>
+
+  <div class="actions" style="margin-bottom:12px;">
+    <a class="btn btn-outline" th:href="@{/admin/reports/dashboard}">Back to Dashboard</a>
+    <a class="btn btn-outline" th:href="@{/admin/dashboard}">Admin Home</a>
+  </div>
+
+  <form class="filter-bar" th:action="@{/admin/reports/top-items}" method="get">
+    <label class="muted">From</label>
+    <input type="date" name="from" th:value="${from}">
+    <label class="muted">To</label>
+    <input type="date" name="to" th:value="${to}">
+    <button class="btn btn-solid" type="submit">Apply</button>
+  </form>
+
+  <div class="kpi-grid" style="margin-top:12px;">
+    <div class="kpi">
+      <div class="muted">Orders (all) in range</div>
+      <div class="kpi-value" th:text="${ordersCount}">0</div>
+    </div>
+    <div class="kpi">
+      <div class="muted">Paid Revenue in range</div>
+      <div class="kpi-value">₹<span th:text="${paidRevenue}">0</span></div>
+    </div>
+  </div>
+
+  <hr class="hr">
+
+  <h3>Top Items</h3>
+
+  <div class="muted" th:if="${#lists.isEmpty(topItems)}" style="margin-top:10px;">
+    No paid orders in this date range.
+  </div>
+
+  <div class="table" th:if="${!#lists.isEmpty(topItems)}">
+    <div class="trow thead" style="grid-template-columns: 1.6fr 1fr 140px 160px;">
+      <div>Food Name</div>
+      <div>Category</div>
+      <div>Total Qty</div>
+      <div>Revenue</div>
+    </div>
+
+    <div class="trow" th:each="r : ${topItems}" style="grid-template-columns: 1.6fr 1fr 140px 160px;">
+      <div><b th:text="${r.foodName}">Food</b></div>
+      <div class="muted" th:text="${r.category}">Category</div>
+      <div th:text="${r.totalQty}">0</div>
+      <div>₹<b th:text="${r.revenue}">0</b></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Top Selling Items</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="admin-bg">
+
+<div class="section">
+
+  <!-- HERO -->
+  <div class="adminFormHero">
+    <div class="adminFormHero-left">
+      <div class="adminFormCrumb">
+        <a th:href="@{/admin/dashboard}">Admin</a>
+        <span> / </span>
+        <a th:href="@{/admin/reports/dashboard}">Reports</a>
+        <span> / </span>
+        <span>Top Items</span>
+      </div>
+
+      <div class="adminFormTitleRow">
+        <div class="adminFormIcon">🏆</div>
+        <div>
+          <h2 class="adminFormTitle">Top Selling Food Items (PAID)</h2>
+          <div class="adminFormSubtitle muted">
+            Filter by date range to see best sellers and paid revenue.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="adminFormHero-actions">
+      <a class="btn btn-outline" th:href="@{/admin/reports/dashboard}">Back</a>
+      <a class="btn btn-outline" th:href="@{/admin/dashboard}">Admin Home</a>
+    </div>
+  </div>
+
+  <!-- FILTER -->
+  <div class="adminFilterCard">
+    <form class="adminFilterRow" th:action="@{/admin/reports/top-items}" method="get">
+      <div class="fGroup">
+        <label class="muted">From</label>
+        <input type="date" name="from" th:value="${from}">
+      </div>
+
+      <div class="fGroup">
+        <label class="muted">To</label>
+        <input type="date" name="to" th:value="${to}">
+      </div>
+
+      <div class="fActions">
+        <button class="btn btn-solid" type="submit">Apply</button>
+      </div>
+    </form>
+
+    <div class="reportKpiGrid small">
+      <div class="reportKpi tone-indigo">
+        <div class="kTop">
+          <div class="kLabel">Orders (all) in range</div>
+          <div class="kIcon">📦</div>
+        </div>
+        <div class="kVal" th:text="${ordersCount}">0</div>
+        <div class="muted">All statuses</div>
+      </div>
+
+      <div class="reportKpi tone-green">
+        <div class="kTop">
+          <div class="kLabel">Paid Revenue in range</div>
+          <div class="kIcon">💰</div>
+        </div>
+        <div class="kVal">₹<span th:text="${paidRevenue}">0</span></div>
+        <div class="muted">PAID only</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="adminTableCard">
+    <div class="adminTableHead">
+      <div class="muted">Top Items</div>
+      <div class="muted" th:text="'Rows: ' + ${#lists.size(topItems)}">Rows: 0</div>
+    </div>
+
+    <div class="muted" th:if="${#lists.isEmpty(topItems)}" style="padding:12px;">
+      No paid orders in this date range.
+    </div>
+
+    <div class="adminTopItemsTable" th:if="${!#lists.isEmpty(topItems)}">
+      <div class="trow thead" style="grid-template-columns: 60px 1.6fr 1fr 140px 160px;">
+        <div>#</div>
+        <div>Food Name</div>
+        <div>Category</div>
+        <div>Total Qty</div>
+        <div>Revenue</div>
+      </div>
+
+      <div class="trow" th:each="r,st : ${topItems}"
+           style="grid-template-columns: 60px 1.6fr 1fr 140px 160px;">
+        <div class="oid" th:text="${st.count}">1</div>
+        <div><b th:text="${r.foodName}">Food</b></div>
+        <div class="muted" th:text="${r.category}">Category</div>
+        <div th:text="${r.totalQty}">0</div>
+        <div>₹<b th:text="${r.revenue}">0</b></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

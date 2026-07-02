@@ -1,0 +1,211 @@
+<!-- <!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin - Users</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="section">
+  <h2>Users (Admin)</h2>
+
+  <div class="actions" style="margin-bottom:12px;">
+    <a class="btn btn-outline" th:href="@{/admin/dashboard}">Back</a>
+    <a class="btn btn-outline" th:href="@{/logout}">Logout</a>
+  </div>
+
+  <div class="table">
+    <div class="trow thead" style="grid-template-columns: 90px 1.4fr 1fr 140px 140px 180px;">
+      <div>ID</div>
+      <div>Name</div>
+      <div>Email</div>
+      <div>Role</div>
+      <div>Enabled</div>
+      <div>Action</div>
+    </div>
+
+    <div class="trow" th:each="u : ${users}"
+         style="grid-template-columns: 90px 1.4fr 1fr 140px 140px 180px;">
+      <div th:text="${u.id}">1</div>
+      <div th:text="${u.fullName}">Name</div>
+      <div th:text="${u.email}">email</div>
+      <div><span class="badge" th:text="${u.role}">USER</span></div>
+      <div th:text="${u.enabled}">true</div>
+
+      <div>
+        <form th:action="@{/admin/users/{id}/toggle(id=${u.id})}" method="post">
+          <button class="btn btn-outline" type="submit"
+                  th:text="${u.enabled ? 'Disable' : 'Enable'}">
+            Disable
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin - Users</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="admin-bg">
+
+<div class="section">
+
+  <!-- HERO -->
+  <div class="adminFormHero">
+    <div class="adminFormHero-left">
+      <div class="adminFormCrumb">
+        <a th:href="@{/admin/dashboard}">Admin</a>
+        <span> / </span>
+        <span>Users</span>
+      </div>
+
+      <div class="adminFormTitleRow">
+        <div class="adminFormIcon">👥</div>
+        <div>
+          <h2 class="adminFormTitle">Users (Admin)</h2>
+          <div class="adminFormSubtitle muted">
+            Search users, check role and enable/disable accounts.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="adminFormHero-actions">
+      <a class="btn btn-outline" th:href="@{/admin/dashboard}">Back</a>
+      <a class="btn btn-solid" th:href="@{/logout}">Logout</a>
+    </div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="adminFilterCard">
+    <div class="adminUsersTop">
+
+      <div class="searchbox" style="flex:1;">
+        <input id="userSearch" type="text" placeholder="Search by name / email / role..." />
+        <div class="muted" style="margin-top:6px;">Example: “admin”, “gmail”, “user”</div>
+      </div>
+
+      <div class="admin-chips">
+        <div class="chipX">
+          <div class="muted">Total</div>
+          <div class="chipX-val" id="totalUsers">0</div>
+        </div>
+        <div class="chipX">
+          <div class="muted">Enabled</div>
+          <div class="chipX-val" id="enabledUsers">0</div>
+        </div>
+        <div class="chipX">
+          <div class="muted">Disabled</div>
+          <div class="chipX-val" id="disabledUsers">0</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="adminTableCard">
+    <div class="adminTableHead">
+      <div class="muted">Users</div>
+      <div class="muted" th:text="'Showing: ' + ${#lists.size(users)}">Showing: 0</div>
+    </div>
+
+    <div class="adminUsersTable">
+      <div class="trow thead" style="grid-template-columns: 90px 1.2fr 1.4fr 140px 140px 180px;">
+        <div>ID</div>
+        <div>Name</div>
+        <div>Email</div>
+        <div>Role</div>
+        <div>Status</div>
+        <div>Action</div>
+      </div>
+
+      <div class="trow adminUserRow"
+           th:each="u : ${users}"
+           th:attr="data-name=${u.fullName},data-email=${u.email},data-role=${u.role},data-enabled=${u.enabled}"
+           style="grid-template-columns: 90px 1.2fr 1.4fr 140px 140px 180px;">
+
+        <div class="oid" th:text="${u.id}">1</div>
+
+        <div>
+          <div style="font-weight:1000;" th:text="${u.fullName}">Name</div>
+          <div class="muted" th:text="${#temporals.format(u.createdAt,'dd MMM yyyy')}">date</div>
+        </div>
+
+        <div th:text="${u.email}">email</div>
+
+        <div>
+          <span class="pill"
+                th:classappend="${u.role.name() == 'ADMIN' ? ' role-admin' : ' role-user'}"
+                th:text="${u.role}">USER</span>
+        </div>
+
+        <div>
+          <span class="pill"
+                th:classappend="${u.enabled ? ' en-on' : ' en-off'}"
+                th:text="${u.enabled ? 'ENABLED' : 'DISABLED'}">ENABLED</span>
+        </div>
+
+        <div>
+          <form th:action="@{/admin/users/{id}/toggle(id=${u.id})}" method="post">
+            <button class="btn btn-outline btn-sm" type="submit"
+                    th:text="${u.enabled ? 'Disable' : 'Enable'}">
+              Disable
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  (function(){
+    const input = document.getElementById('userSearch');
+    const rows = Array.from(document.querySelectorAll('.adminUserRow'));
+
+    function updateCounts(){
+      let total=0, en=0, dis=0;
+      rows.forEach(r=>{
+        if(r.style.display === 'none') return;
+        total++;
+        const enabled = (r.dataset.enabled === 'true');
+        if(enabled) en++; else dis++;
+      });
+      document.getElementById('totalUsers').innerText = total;
+      document.getElementById('enabledUsers').innerText = en;
+      document.getElementById('disabledUsers').innerText = dis;
+    }
+
+    function filter(){
+      const q = (input.value || '').toLowerCase().trim();
+      rows.forEach(r=>{
+        const text = `${r.dataset.name} ${r.dataset.email} ${r.dataset.role}`.toLowerCase();
+        r.style.display = text.includes(q) ? '' : 'none';
+      });
+      updateCounts();
+    }
+
+    updateCounts();
+    input.addEventListener('input', filter);
+  })();
+</script>
+
+</body>
+</html>

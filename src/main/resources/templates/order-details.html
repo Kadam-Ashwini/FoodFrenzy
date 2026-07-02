@@ -1,0 +1,1027 @@
+<!-- 
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="'Order #' + ${order.id}">Order Details</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="navbar">
+  <div class="logo">
+    <img th:src="@{/images/logo.png}" alt="Logo">
+    <span>FoodFrenzy</span>
+  </div>
+
+  <div class="nav-actions">
+    <a class="btn btn-outline" th:href="@{/orders}">My Orders</a>
+    <a class="btn btn-outline" th:href="@{/cart}">Cart</a>
+    <a class="btn btn-outline" th:href="@{/}">Home</a>
+
+    <div class="auth-buttons user-area" th:if="${session.userName != null}">
+      <span class="hello">Hello, <b th:text="${session.userName}">User</b></span>
+      <a class="btn btn-outline" th:href="@{/logout}">Logout</a>
+    </div>
+  </div>
+</header>
+
+<div class="section">
+  <h2 th:text="'Order #' + ${order.id}">Order</h2>
+
+  Messages
+  <p class="msg" th:if="${param.ok}" th:text="${param.ok[0]}"></p>
+  <p class="error" th:if="${param.msg}" th:text="${param.msg[0]}"></p>
+
+  <div class="order-meta">
+    <div>
+      <span class="muted">Restaurant:</span>
+      <b th:text="${order.restaurant.name}">R</b>
+    </div>
+
+    <div>
+      <span class="muted">Total:</span>
+      ₹<b th:text="${order.totalAmount}">0</b>
+    </div>
+
+    <div>
+      <span class="muted">Payment Status:</span>
+      <b th:text="${order.paymentStatus}">PENDING</b>
+    </div>
+
+    <div th:if="${order.paymentMethod != null}">
+      <span class="muted">Payment Method:</span>
+      <b th:text="${order.paymentMethod}">UPI</b>
+    </div>
+
+    <div th:if="${order.paymentRef != null}">
+      <span class="muted">Payment Ref:</span>
+      <b th:text="${order.paymentRef}">PAY-XXXXX</b>
+    </div>
+
+    <div>
+      <span class="muted">Status:</span>
+      <span class="badge" th:text="${order.status}">CREATED</span>
+    </div>
+
+    <div>
+      <span class="muted">Delivery Address:</span>
+      <b th:text="${order.deliveryAddress}">Address</b>
+      <span class="muted" th:if="${order.city != null}" th:text="' (' + ${order.city} + ')'"></span>
+    </div>
+  </div>
+
+  Pay Now (if not paid and not cancelled)
+  <div style="margin-top:12px;"
+       th:if="${order.paymentStatus.name() != 'PAID' and order.status.name() != 'CANCELLED'}">
+    <a class="btn btn-solid" th:href="@{/payment/{id}(id=${order.id})}">Pay Now</a>
+  </div>
+
+  Cancel only if CREATED
+  <form th:if="${order.status.name() == 'CREATED'}"
+        th:action="@{/orders/{id}/cancel(id=${order.id})}"
+        method="post"
+        style="margin-top:12px;">
+    <button class="btn btn-outline" type="submit">Cancel Order</button>
+    <div class="muted" style="margin-top:6px;">Cancel allowed only before confirmation.</div>
+  </form>
+
+  <hr class="hr">
+
+  <h3>Tracking</h3>
+
+  <div class="timeline">
+    <div class="step"
+         th:each="s : ${allStatuses}"
+         th:classappend="${
+            order.status.name() == 'CANCELLED' ?
+              (s.name() == 'CANCELLED' ? ' active' : ' disabled')
+            :
+              (s.ordinal() <= order.status.ordinal() ? ' active' : '')
+         }">
+      <div class="dot"></div>
+      <div class="label" th:text="${s.name()}">CREATED</div>
+    </div>
+  </div>
+
+  <hr class="hr">
+
+  <h3>Items</h3>
+  <div class="order-items">
+    <div class="order-item" th:each="i : ${items}">
+      <div>
+        <b th:text="${i.foodName}">Food</b>
+        <div class="muted" th:text="${i.category + ' • ' + (i.veg ? 'Veg' : 'Non-Veg')}">Meta</div>
+        <div class="muted" th:text="'Qty: ' + ${i.quantity}">Qty</div>
+      </div>
+      <div>₹<b th:text="${i.lineTotal}">0</b></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html> -->
+
+<!-- 
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="'Order #' + ${order.id}">Order Details</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+  Common Navbar
+  <div th:replace="~{fragments/navbar :: appNavbar}"></div>
+
+  <div class="section">
+    <div class="actions" style="margin-bottom:12px;">
+      <a class="btn btn-outline" th:href="@{/orders}">Back to My Orders</a>
+    </div>
+
+    <h2 th:text="'Order #' + ${order.id}">Order</h2>
+
+    Messages
+    <p class="msg" th:if="${param.ok}" th:text="${param.ok[0]}"></p>
+    <p class="error" th:if="${param.msg}" th:text="${param.msg[0]}"></p>
+
+    <div class="order-meta">
+      <div>
+        <span class="muted">Restaurant:</span>
+        <b th:text="${order.restaurant.name}">R</b>
+      </div>
+
+      <div>
+        <span class="muted">Total:</span>
+        ₹<b th:text="${order.totalAmount}">0</b>
+      </div>
+
+      <div>
+        <span class="muted">Payment Status:</span>
+        <b th:text="${order.paymentStatus}">PENDING</b>
+      </div>
+
+      <div th:if="${order.paymentMethod != null}">
+        <span class="muted">Payment Method:</span>
+        <b th:text="${order.paymentMethod}">UPI</b>
+      </div>
+
+      <div th:if="${order.paymentRef != null}">
+        <span class="muted">Payment Ref:</span>
+        <b th:text="${order.paymentRef}">PAY-XXXXX</b>
+      </div>
+
+      <div>
+        <span class="muted">Status:</span>
+        <span class="badge" th:text="${order.status}">CREATED</span>
+      </div>
+
+      <div>
+        <span class="muted">Delivery Address:</span>
+        <b th:text="${order.deliveryAddress}">Address</b>
+        <span class="muted" th:if="${order.city != null}" th:text="' (' + ${order.city} + ')'"></span>
+      </div>
+    </div>
+
+    Pay Now (if not paid and not cancelled)
+    <div style="margin-top:12px;"
+         th:if="${order.paymentStatus.name() != 'PAID' and order.status.name() != 'CANCELLED'}">
+      <a class="btn btn-solid" th:href="@{/payment/{id}(id=${order.id})}">Pay Now</a>
+    </div>
+
+    Cancel only if CREATED
+    <form th:if="${order.status.name() == 'CREATED'}"
+          th:action="@{/orders/{id}/cancel(id=${order.id})}"
+          method="post"
+          style="margin-top:12px;">
+      <button class="btn btn-outline" type="submit">Cancel Order</button>
+      <div class="muted" style="margin-top:6px;">Cancel allowed only before confirmation.</div>
+    </form>
+
+    <hr class="hr">
+
+    <h3>Tracking</h3>
+
+    <div class="timeline">
+      <div class="step"
+           th:each="s : ${allStatuses}"
+           th:classappend="${
+              order.status.name() == 'CANCELLED' ?
+                (s.name() == 'CANCELLED' ? ' active' : ' disabled')
+              :
+                (s.ordinal() <= order.status.ordinal() ? ' active' : '')
+           }">
+        <div class="dot"></div>
+        <div class="label" th:text="${s.name()}">CREATED</div>
+      </div>
+    </div>
+
+    <hr class="hr">
+
+    <h3>Items</h3>
+    <div class="order-items">
+      <div class="order-item" th:each="i : ${items}">
+        <div>
+          <b th:text="${i.foodName}">Food</b>
+          <div class="muted" th:text="${i.category + ' • ' + (i.veg ? 'Veg' : 'Non-Veg')}">Meta</div>
+          <div class="muted" th:text="'Qty: ' + ${i.quantity}">Qty</div>
+        </div>
+        <div>₹<b th:text="${i.lineTotal}">0</b></div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html> -->
+
+<!-- 
+
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="'Order #' + ${order.id}">Order Details</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+  Common Navbar
+  <div th:replace="~{fragments/navbar :: appNavbar}"></div>
+
+  <div class="section">
+    <div class="actions" style="margin-bottom:12px;">
+      <a class="btn btn-outline" th:href="@{/orders}">Back to My Orders</a>
+    </div>
+
+    <h2 th:text="'Order #' + ${order.id}">Order</h2>
+
+    Messages
+    <p class="msg" th:if="${param.ok}" th:text="${param.ok[0]}"></p>
+    <p class="error" th:if="${param.msg}" th:text="${param.msg[0]}"></p>
+
+    <div class="order-meta">
+      <div>
+        <span class="muted">Restaurant:</span>
+        <b th:text="${order.restaurant.name}">R</b>
+      </div>
+
+      <div>
+        <span class="muted">Total:</span>
+        ₹<b th:text="${order.totalAmount}">0</b>
+      </div>
+
+      <div>
+        <span class="muted">Payment Status:</span>
+        <b th:text="${order.paymentStatus}">PENDING</b>
+      </div>
+
+      <div th:if="${order.paymentMethod != null}">
+        <span class="muted">Payment Method:</span>
+        <b th:text="${order.paymentMethod}">UPI</b>
+      </div>
+
+      <div th:if="${order.paymentRef != null}">
+        <span class="muted">Payment Ref:</span>
+        <b th:text="${order.paymentRef}">PAY-XXXXX</b>
+      </div>
+
+      <div>
+        <span class="muted">Status:</span>
+        <span class="badge" th:text="${order.status}">CREATED</span>
+      </div>
+
+      <div>
+        <span class="muted">Delivery Address:</span>
+        <b th:text="${order.deliveryAddress}">Address</b>
+        <span class="muted" th:if="${order.city != null}" th:text="' (' + ${order.city} + ')'"></span>
+      </div>
+    </div>
+
+    Pay Now (if not paid and not cancelled)
+    <div style="margin-top:12px;"
+         th:if="${order.paymentStatus.name() != 'PAID' and order.status.name() != 'CANCELLED'}">
+      <a class="btn btn-solid" th:href="@{/payment/{id}(id=${order.id})}">Pay Now</a>
+    </div>
+    
+    
+    
+    Track Live (only while out for delivery)
+<div style="margin-top:12px;"
+     th:if="${order.status.name() == 'OUT_FOR_DELIVERY'}">
+  <a class="btn btn-solid" th:href="@{/track/{id}(id=${order.id})}">
+    Track Live
+  </a>
+</div>
+
+
+
+Confirm Delivered (Customer)
+<form th:if="${order.status.name() == 'OUT_FOR_DELIVERY'}"
+      th:action="@{/orders/{id}/confirm-delivered(id=${order.id})}"
+      method="post"
+      style="margin-top:12px;">
+  <button class="btn btn-solid" type="submit">Confirm Delivered</button>
+</form>
+
+    Give Feedback (only after DELIVERED)
+    <div style="margin-top:12px;"
+         th:if="${order.status.name() == 'DELIVERED'}">
+      <a class="btn btn-solid" th:href="@{/feedback/order/{id}(id=${order.id})}">
+        Give Feedback
+      </a>
+    </div>
+
+    Cancel only if CREATED
+    <form th:if="${order.status.name() == 'CREATED'}"
+          th:action="@{/orders/{id}/cancel(id=${order.id})}"
+          method="post"
+          style="margin-top:12px;">
+      <button class="btn btn-outline" type="submit">Cancel Order</button>
+      <div class="muted" style="margin-top:6px;">Cancel allowed only before confirmation.</div>
+    </form>
+
+    <hr class="hr">
+
+    <h3>Tracking</h3>
+
+    <div class="timeline">
+      <div class="step"
+           th:each="s : ${allStatuses}"
+           th:classappend="${
+              order.status.name() == 'CANCELLED' ?
+                (s.name() == 'CANCELLED' ? ' active' : ' disabled')
+              :
+                (s.ordinal() <= order.status.ordinal() ? ' active' : '')
+           }">
+        <div class="dot"></div>
+        <div class="label" th:text="${s.name()}">CREATED</div>
+      </div>
+    </div>
+
+    <hr class="hr">
+
+    <h3>Items</h3>
+    <div class="order-items">
+      <div class="order-item" th:each="i : ${items}">
+        <div>
+          <b th:text="${i.foodName}">Food</b>
+          <div class="muted" th:text="${i.category + ' • ' + (i.veg ? 'Veg' : 'Non-Veg')}">Meta</div>
+          <div class="muted" th:text="'Qty: ' + ${i.quantity}">Qty</div>
+        </div>
+        <div>₹<b th:text="${i.lineTotal}">0</b></div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html> -->
+
+<!-- 
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="'Order #' + ${order.id}">Order Details</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+  Common Navbar
+  <div th:replace="~{fragments/navbar :: appNavbar}"></div>
+
+  <div class="section">
+    <div class="actions" style="margin-bottom:12px;">
+      <a class="btn btn-outline" th:href="@{/orders}">Back to My Orders</a>
+    </div>
+
+    <h2 th:text="'Order #' + ${order.id}">Order</h2>
+
+    Messages
+    <p class="msg" th:if="${param.ok}" th:text="${param.ok[0]}"></p>
+    <p class="error" th:if="${param.msg}" th:text="${param.msg[0]}"></p>
+
+    <div class="order-meta">
+      <div>
+        <span class="muted">Restaurant:</span>
+        <b th:text="${order.restaurant.name}">R</b>
+      </div>
+
+      <div>
+        <span class="muted">Total:</span>
+        ₹<b th:text="${order.totalAmount}">0</b>
+      </div>
+
+      <div>
+        <span class="muted">Payment Status:</span>
+        <b th:text="${order.paymentStatus}">PENDING</b>
+      </div>
+
+      <div th:if="${order.paymentMethod != null}">
+        <span class="muted">Payment Method:</span>
+        <b th:text="${order.paymentMethod}">UPI</b>
+      </div>
+
+      <div th:if="${order.paymentRef != null}">
+        <span class="muted">Payment Ref:</span>
+        <b th:text="${order.paymentRef}">PAY-XXXXX</b>
+      </div>
+
+      <div>
+        <span class="muted">Status:</span>
+        <span class="badge" th:text="${order.status}">CREATED</span>
+      </div>
+
+      <div>
+        <span class="muted">Delivery Address:</span>
+        <b th:text="${order.deliveryAddress}">Address</b>
+        <span class="muted" th:if="${order.city != null}" th:text="' (' + ${order.city} + ')'"></span>
+      </div>
+    </div>
+
+    Action Buttons
+    <div class="actions" style="margin-top:12px;">
+
+      Pay Now (only if not paid, not COD, not cancelled, not delivered)
+      <a class="btn btn-solid"
+         th:if="${order.paymentStatus.name() != 'PAID'
+                 and (order.paymentMethod == null or order.paymentMethod.name() != 'COD')
+                 and order.status.name() != 'CANCELLED'
+                 and order.status.name() != 'DELIVERED'}"
+         th:href="@{/payment/{id}(id=${order.id})}">
+        Pay Now
+      </a>
+
+      Track Live (only while OUT_FOR_DELIVERY)
+      <a class="btn btn-solid"
+         th:if="${order.status.name() == 'OUT_FOR_DELIVERY'}"
+         th:href="@{/track/{id}(id=${order.id})}">
+        Track Live
+      </a>
+
+      Confirm Delivered (Customer)
+      <form th:if="${order.status.name() == 'OUT_FOR_DELIVERY'}"
+            th:action="@{/orders/{id}/confirm-delivered(id=${order.id})}"
+            method="post"
+            style="display:inline;">
+        <button class="btn btn-solid" type="submit">Confirm Delivered</button>
+      </form>
+
+      Give Feedback (only after DELIVERED)
+      <a class="btn btn-solid"
+         th:if="${order.status.name() == 'DELIVERED'}"
+         th:href="@{/feedback/order/{id}(id=${order.id})}">
+        Give Feedback
+      </a>
+    </div>
+
+    Cancel only if CREATED
+    <form th:if="${order.status.name() == 'CREATED'}"
+          th:action="@{/orders/{id}/cancel(id=${order.id})}"
+          method="post"
+          style="margin-top:12px;">
+      <button class="btn btn-outline" type="submit">Cancel Order</button>
+      <div class="muted" style="margin-top:6px;">Cancel allowed only before confirmation.</div>
+    </form>
+
+    <hr class="hr">
+
+    <h3>Tracking</h3>
+
+    <div class="timeline">
+      <div class="step"
+           th:each="s : ${allStatuses}"
+           th:classappend="${
+              order.status.name() == 'CANCELLED' ?
+                (s.name() == 'CANCELLED' ? ' active' : ' disabled')
+              :
+                (s.ordinal() <= order.status.ordinal() ? ' active' : '')
+           }">
+        <div class="dot"></div>
+        <div class="label" th:text="${s.name()}">CREATED</div>
+      </div>
+    </div>
+
+    <hr class="hr">
+
+    <h3>Items</h3>
+    <div class="order-items">
+      <div class="order-item" th:each="i : ${items}">
+        <div>
+          <b th:text="${i.foodName}">Food</b>
+          <div class="muted" th:text="${i.category + ' • ' + (i.veg ? 'Veg' : 'Non-Veg')}">Meta</div>
+          <div class="muted" th:text="'Qty: ' + ${i.quantity}">Qty</div>
+        </div>
+        <div>₹<b th:text="${i.lineTotal}">0</b></div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html> -->
+
+
+
+<!-- 
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="'Order #' + ${order.id}">Order Details</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+  Common Navbar
+  <div th:replace="~{fragments/navbar :: appNavbar}"></div>
+
+  <div class="section">
+    <div class="actions" style="margin-bottom:12px;">
+      <a class="btn btn-outline" th:href="@{/orders}">Back to My Orders</a>
+    </div>
+
+    <h2 th:text="'Order #' + ${order.id}">Order</h2>
+
+    Messages
+    <p class="msg" th:if="${param.ok}" th:text="${param.ok[0]}"></p>
+    <p class="error" th:if="${param.msg}" th:text="${param.msg[0]}"></p>
+
+    <div class="order-meta">
+      <div>
+        <span class="muted">Restaurant:</span>
+        <b th:text="${order.restaurant.name}">R</b>
+      </div>
+
+      <div>
+        <span class="muted">Total:</span>
+        ₹<b th:text="${order.totalAmount}">0</b>
+      </div>
+
+      <div>
+        <span class="muted">Payment Status:</span>
+        <b th:text="${order.paymentStatus}">PENDING</b>
+      </div>
+
+      <div th:if="${order.paymentMethod != null}">
+        <span class="muted">Payment Method:</span>
+        <b th:text="${order.paymentMethod}">UPI</b>
+      </div>
+
+      <div th:if="${order.paymentRef != null}">
+        <span class="muted">Payment Ref:</span>
+        <b th:text="${order.paymentRef}">PAY-XXXXX</b>
+      </div>
+
+      <div>
+        <span class="muted">Status:</span>
+        <span class="badge" th:text="${order.status}">CREATED</span>
+      </div>
+
+      <div>
+        <span class="muted">Delivery Address:</span>
+        <b th:text="${order.deliveryAddress}">Address</b>
+        <span class="muted" th:if="${order.city != null}" th:text="' (' + ${order.city} + ')'"></span>
+      </div>
+    </div>
+
+    Action Buttons
+    <div class="actions" style="margin-top:12px;">
+
+      Invoice (always available)
+      <a class="btn btn-outline" th:href="@{/invoice/{id}(id=${order.id})}">
+        Invoice
+      </a>
+
+      Pay Now (only if not paid, not COD, not cancelled, not delivered)
+      <a class="btn btn-solid"
+         th:if="${order.paymentStatus.name() != 'PAID'
+                 and (order.paymentMethod == null or order.paymentMethod.name() != 'COD')
+                 and order.status.name() != 'CANCELLED'
+                 and order.status.name() != 'DELIVERED'}"
+         th:href="@{/payment/{id}(id=${order.id})}">
+        Pay Now
+      </a>
+
+      Track Live (only while OUT_FOR_DELIVERY)
+      <a class="btn btn-solid"
+         th:if="${order.status.name() == 'OUT_FOR_DELIVERY'}"
+         th:href="@{/track/{id}(id=${order.id})}">
+        Track Live
+      </a>
+
+      Confirm Delivered (Customer)
+      <form th:if="${order.status.name() == 'OUT_FOR_DELIVERY'}"
+            th:action="@{/orders/{id}/confirm-delivered(id=${order.id})}"
+            method="post"
+            style="display:inline;">
+        <button class="btn btn-solid" type="submit">Confirm Delivered</button>
+      </form>
+
+      Give Feedback (only after DELIVERED)
+      <a class="btn btn-solid"
+         th:if="${order.status.name() == 'DELIVERED'}"
+         th:href="@{/feedback/order/{id}(id=${order.id})}">
+        Give Feedback
+      </a>
+    </div>
+
+    Cancel only if CREATED
+    <form th:if="${order.status.name() == 'CREATED'}"
+          th:action="@{/orders/{id}/cancel(id=${order.id})}"
+          method="post"
+          style="margin-top:12px;">
+      <button class="btn btn-outline" type="submit">Cancel Order</button>
+      <div class="muted" style="margin-top:6px;">Cancel allowed only before confirmation.</div>
+    </form>
+
+    <hr class="hr">
+
+    <h3>Tracking</h3>
+
+    <div class="timeline">
+      <div class="step"
+           th:each="s : ${allStatuses}"
+           th:classappend="${
+              order.status.name() == 'CANCELLED' ?
+                (s.name() == 'CANCELLED' ? ' active' : ' disabled')
+              :
+                (s.ordinal() <= order.status.ordinal() ? ' active' : '')
+           }">
+        <div class="dot"></div>
+        <div class="label" th:text="${s.name()}">CREATED</div>
+      </div>
+    </div>
+
+    <hr class="hr">
+
+    <h3>Items</h3>
+    <div class="order-items">
+      <div class="order-item" th:each="i : ${items}">
+        <div>
+          <b th:text="${i.foodName}">Food</b>
+          <div class="muted" th:text="${i.category + ' • ' + (i.veg ? 'Veg' : 'Non-Veg')}">Meta</div>
+          <div class="muted" th:text="'Qty: ' + ${i.quantity}">Qty</div>
+        </div>
+        <div>₹<b th:text="${i.lineTotal}">0</b></div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html> -->
+<!-- 
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="'Order #' + ${order.id}">Order Details</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="order-bg">
+
+  <div th:replace="~{fragments/navbar :: appNavbar}"></div>
+
+  <div class="section orderPage">
+
+    Head
+    <div class="orderHead">
+      <div>
+        <h2 style="margin-bottom:6px;" th:text="'Order #' + ${order.id}">Order</h2>
+        <div class="muted">
+          Restaurant: <b th:text="${order.restaurant.name}">Restaurant</b>
+          <span class="dotSep">•</span>
+          Placed: <b th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy, hh:mm a')}">date</b>
+        </div>
+      </div>
+
+      <div class="orderHeadActions">
+        <a class="btn btn-outline" th:href="@{/orders}">Back to My Orders</a>
+        <a class="btn btn-outline" th:href="@{/invoice/{id}(id=${order.id})}">Invoice</a>
+      </div>
+    </div>
+
+    Messages
+    <p class="msg" th:if="${param.ok}" th:text="${param.ok[0]}"></p>
+    <p class="error" th:if="${param.msg}" th:text="${param.msg[0]}"></p>
+
+    <div class="orderGrid">
+
+      LEFT: Summary
+      <div class="orderCard">
+        <div class="cardTitleX">
+          <span class="cardIconX">🧾</span>
+          <span>Order Summary</span>
+        </div>
+
+        <div class="orderMetaGrid">
+          <div class="metaBox">
+            <div class="muted">Total</div>
+            <div class="metaBig">₹<span th:text="${order.totalAmount}">0</span></div>
+          </div>
+
+          <div class="metaBox">
+            <div class="muted">Payment</div>
+            <div>
+              <span class="pill"
+                    th:text="${order.paymentStatus}"
+                    th:classappend="' pay-' + ${#strings.toLowerCase(order.paymentStatus.name())}">
+                PENDING
+              </span>
+            </div>
+
+            <div class="muted" style="margin-top:6px;" th:if="${order.paymentMethod != null}">
+              Method: <b th:text="${order.paymentMethod}">COD</b>
+            </div>
+
+            <div class="muted" style="margin-top:6px;" th:if="${order.paymentRef != null}">
+              Ref: <b th:text="${order.paymentRef}">PAY-XXX</b>
+            </div>
+          </div>
+
+          <div class="metaBox col2">
+            <div class="muted">Delivery Address</div>
+            <div style="font-weight:1000;" th:text="${order.deliveryAddress}">Address</div>
+            <div class="muted" th:if="${order.city != null and !#strings.isEmpty(order.city)}"
+                 th:text="${order.city}">City</div>
+          </div>
+        </div>
+
+        <div class="orderActionsRow">
+
+          Pay Now
+          <a class="btn btn-solid"
+             th:if="${order.paymentStatus.name() != 'PAID'
+                     and (order.paymentMethod == null or order.paymentMethod.name() != 'COD')
+                     and order.status.name() != 'CANCELLED'
+                     and order.status.name() != 'DELIVERED'}"
+             th:href="@{/payment/{id}(id=${order.id})}">
+            Pay Now
+          </a>
+
+          Track Live
+          <a class="btn btn-solid"
+             th:if="${order.status.name() == 'OUT_FOR_DELIVERY'}"
+             th:href="@{/track/{id}(id=${order.id})}">
+            Track Live
+          </a>
+
+          Confirm Delivered
+          <form th:if="${order.status.name() == 'OUT_FOR_DELIVERY'}"
+                th:action="@{/orders/{id}/confirm-delivered(id=${order.id})}"
+                method="post"
+                style="display:inline;">
+            <button class="btn btn-solid" type="submit">Confirm Delivered</button>
+          </form>
+
+          Feedback
+          <a class="btn btn-outline"
+             th:if="${order.status.name() == 'DELIVERED'}"
+             th:href="@{/feedback/order/{id}(id=${order.id})}">
+            Give Feedback
+          </a>
+        </div>
+
+        Cancel
+        <form th:if="${order.status.name() == 'CREATED'}"
+              th:action="@{/orders/{id}/cancel(id=${order.id})}"
+              method="post"
+              style="margin-top:12px;">
+          <button class="btn btn-outline" type="submit">Cancel Order</button>
+          <div class="muted" style="margin-top:6px;">Cancel allowed only before confirmation.</div>
+        </form>
+      </div>
+
+      RIGHT: Items
+      <div class="orderCard">
+        <div class="cardTitleX">
+          <span class="cardIconX">🍽️</span>
+          <span>Items</span>
+        </div>
+
+        <div class="orderItemsCard">
+          <div class="orderItemRow" th:each="i : ${items}">
+            <div>
+              <div style="font-weight:1000;" th:text="${i.foodName}">Food</div>
+              <div class="muted" th:text="${i.category + ' • ' + (i.veg ? 'Veg' : 'Non-Veg')}">Meta</div>
+              <div class="muted" th:text="'Qty: ' + ${i.quantity}">Qty</div>
+            </div>
+            <div class="itemAmt">₹<b th:text="${i.lineTotal}">0</b></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    Tracking Timeline
+    <div class="orderCard" style="margin-top:14px;">
+      <div class="cardTitleX">
+        <span class="cardIconX">🚚</span>
+        <span>Tracking</span>
+      </div>
+
+      <div class="timelineX">
+        <div class="tStep"
+             th:each="s : ${allStatuses}"
+             th:classappend="${
+                order.status.name() == 'CANCELLED' ?
+                  (s.name() == 'CANCELLED' ? ' active' : ' disabled')
+                :
+                  (s.ordinal() <= order.status.ordinal() ? ' active' : '')
+             }">
+          <div class="tDot"></div>
+          <div class="tLabel" th:text="${s.name()}">CREATED</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html> -->
+
+
+
+<!-- FILE: src/main/resources/templates/order-details.html -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="'Order #' + ${order.id}">Order Details</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="order-bg">
+
+<div th:replace="~{fragments/navbar :: appNavbar}"></div>
+
+<div class="section orderPage">
+
+  <div class="orderHead">
+    <div>
+      <h2 style="margin-bottom:6px;" th:text="'Order #' + ${order.id}">Order</h2>
+      <div class="muted">
+        Restaurant: <b th:text="${order.restaurant.name}">Restaurant</b>
+        <span class="dotSep">•</span>
+        Placed: <b th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy, hh:mm a')}">date</b>
+      </div>
+    </div>
+
+    <div class="orderHeadActions">
+      <a class="btn btn-outline" th:href="@{/orders}">Back to My Orders</a>
+      <a class="btn btn-outline" th:href="@{/invoice/{id}(id=${order.id})}">Invoice</a>
+    </div>
+  </div>
+
+  <p class="msg" th:if="${param.ok}" th:text="${param.ok[0]}"></p>
+  <p class="error" th:if="${param.msg}" th:text="${param.msg[0]}"></p>
+
+  <!-- 2 equal cards -->
+  <div class="orderGrid">
+
+    <!-- LEFT -->
+    <div class="orderCard orderCardFlex">
+      <div class="cardTitleX">
+        <span class="cardIconX">🧾</span>
+        <span>Order Summary</span>
+      </div>
+
+      <div class="orderMetaGrid">
+        <div class="metaBox">
+          <div class="muted">Total</div>
+          <div class="metaBig">₹<span th:text="${order.totalAmount}">0</span></div>
+        </div>
+
+        <div class="metaBox">
+          <div class="muted">Payment</div>
+          <div style="margin-top:6px;">
+            <span class="pill"
+                  th:text="${order.paymentStatus}"
+                  th:classappend="' pay-' + ${#strings.toLowerCase(order.paymentStatus.name())}">
+              PENDING
+            </span>
+          </div>
+
+          <div class="muted" style="margin-top:8px;" th:if="${order.paymentMethod != null}">
+            Method: <b th:text="${order.paymentMethod}">COD</b>
+          </div>
+
+          <div class="muted" style="margin-top:6px;" th:if="${order.paymentRef != null}">
+            Ref: <b th:text="${order.paymentRef}">PAY-XXX</b>
+          </div>
+        </div>
+
+        <div class="metaBox orderColSpan2">
+          <div class="muted">Delivery Address</div>
+          <div style="font-weight:1000;" th:text="${order.deliveryAddress}">Address</div>
+          <div class="muted" th:if="${order.city != null and !#strings.isEmpty(order.city)}"
+               th:text="${order.city}">City</div>
+        </div>
+      </div>
+
+      <div class="orderActionsRow orderPushBottom">
+        <a class="btn btn-solid"
+           th:if="${order.paymentStatus.name() != 'PAID'
+                   and (order.paymentMethod == null or order.paymentMethod.name() != 'COD')
+                   and order.status.name() != 'CANCELLED'
+                   and order.status.name() != 'DELIVERED'}"
+           th:href="@{/payment/{id}(id=${order.id})}">
+          Pay Now
+        </a>
+
+        <a class="btn btn-solid"
+           th:if="${order.status.name() == 'OUT_FOR_DELIVERY'}"
+           th:href="@{/track/{id}(id=${order.id})}">
+          Track Live
+        </a>
+
+        <form th:if="${order.status.name() == 'OUT_FOR_DELIVERY'}"
+              th:action="@{/orders/{id}/confirm-delivered(id=${order.id})}"
+              method="post" style="display:inline;">
+          <button class="btn btn-solid" type="submit">Confirm Delivered</button>
+        </form>
+
+        <a class="btn btn-outline"
+           th:if="${order.status.name() == 'DELIVERED'}"
+           th:href="@{/feedback/order/{id}(id=${order.id})}">
+          Give Feedback
+        </a>
+      </div>
+
+      <form th:if="${order.status.name() == 'CREATED'}"
+            th:action="@{/orders/{id}/cancel(id=${order.id})}"
+            method="post"
+            style="margin-top:12px;">
+        <button class="btn btn-outline" type="submit">Cancel Order</button>
+        <div class="muted" style="margin-top:6px;">Cancel allowed only before confirmation.</div>
+      </form>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="orderCard orderCardFlex">
+      <div class="cardTitleX">
+        <span class="cardIconX">🍽️</span>
+        <span>Items</span>
+      </div>
+
+      <div class="orderItemsCard orderGrow">
+        <div class="orderItemRow" th:each="i : ${items}">
+          <div>
+            <div style="font-weight:1000;" th:text="${i.foodName}">Food</div>
+            <div class="muted" th:text="${i.category + ' • ' + (i.veg ? 'Veg' : 'Non-Veg')}">Meta</div>
+            <div class="muted" th:text="'Qty: ' + ${i.quantity}">Qty</div>
+          </div>
+          <div class="itemAmt">₹<b th:text="${i.lineTotal}">0</b></div>
+        </div>
+      </div>
+
+      <div class="muted orderPushBottom">
+        Tip: Check invoice for full payment details.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Tracking card full width -->
+  <div class="orderCard" style="margin-top:14px;">
+    <div class="cardTitleX">
+      <span class="cardIconX">🚚</span>
+      <span>Tracking</span>
+    </div>
+
+    <div class="timelineX">
+      <div class="tStep"
+           th:each="s : ${allStatuses}"
+           th:classappend="${
+              order.status.name() == 'CANCELLED' ?
+                (s.name() == 'CANCELLED' ? ' active' : ' disabled')
+              :
+                (s.ordinal() <= order.status.ordinal() ? ' active' : '')
+           }">
+        <div class="tDot"></div>
+        <div class="tLabel" th:text="${s.name()}">CREATED</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

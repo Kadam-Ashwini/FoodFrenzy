@@ -1,0 +1,340 @@
+<!-- <!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manage Food Items</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+  <div class="section">
+    <h2 th:text="'Food Items - ' + ${restaurant.name}">Food Items</h2>
+
+    <div class="actions">
+      <a class="btn btn-outline" th:href="@{/admin/restaurants}">Back</a>
+      <a class="btn btn-solid" th:href="@{/admin/food-items/{rid}/new(rid=${restaurant.id})}">+ Add Food Item</a>
+    </div>
+
+    <div style="margin-top:16px;"></div>
+
+    <table border="1" cellpadding="10" cellspacing="0" style="width:100%; border-collapse:collapse;">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Category</th>
+          <th>Veg</th>
+          <th>Price</th>
+          <th>Available</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="i : ${items}">
+          <td th:text="${i.id}"></td>
+          <td th:text="${i.name}"></td>
+          <td th:text="${i.category}"></td>
+          <td th:text="${i.veg}"></td>
+          <td th:text="${i.price}"></td>
+          <td th:text="${i.available}"></td>
+          <td>
+            <a th:href="@{/admin/food-items/{rid}/delete/{iid}(rid=${restaurant.id}, iid=${i.id})}">Delete</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+</body>
+</html> -->
+
+
+<!-- 
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin - Food Items</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="section">
+  <h2 th:text="'Food Items - ' + ${restaurant.name}">Food Items</h2>
+
+  <div class="actions" style="margin-bottom:12px;">
+    <a class="btn btn-outline" th:href="@{/admin/restaurants}">Back</a>
+    <a class="btn btn-solid" th:href="@{/admin/food-items/{rid}/new(rid=${restaurant.id})}">+ Add Food Item</a>
+  </div>
+
+  <div class="table">
+    <div class="trow thead" style="grid-template-columns: 80px 1.6fr 1fr 120px 120px 140px 360px;">
+      <div>ID</div>
+      <div>Name</div>
+      <div>Category</div>
+      <div>Veg</div>
+      <div>Price</div>
+      <div>Available</div>
+      <div>Actions</div>
+    </div>
+
+    <div class="trow" th:each="i : ${items}"
+         style="grid-template-columns: 80px 1.6fr 1fr 120px 120px 140px 360px;">
+      <div th:text="${i.id}">1</div>
+      <div th:text="${i.name}">Food</div>
+      <div th:text="${i.category}">Category</div>
+      <div th:text="${i.veg ? 'YES' : 'NO'}">YES</div>
+      <div>₹<b th:text="${i.price}">0</b></div>
+      <div>
+        <span class="badge" th:text="${i.available ? 'AVAILABLE' : 'NOT AVAILABLE'}">AVAILABLE</span>
+      </div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <a class="btn btn-outline"
+           th:href="@{/admin/food-items/{rid}/edit/{iid}(rid=${restaurant.id}, iid=${i.id})}">
+          Edit
+        </a>
+
+        <form th:action="@{/admin/food-items/{rid}/toggle/{iid}(rid=${restaurant.id}, iid=${i.id})}" method="post">
+          <button class="btn btn-outline" type="submit"
+                  th:text="${i.available ? 'Make Unavailable' : 'Make Available'}">
+            Toggle
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html> -->
+
+<!-- 
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin - Food Items</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="section">
+  <h2 th:text="'Food Items - ' + ${restaurant.name}">Food Items</h2>
+
+  <div class="actions" style="margin-bottom:12px;">
+    <a class="btn btn-outline" th:href="@{/admin/restaurants}">Back</a>
+    <a class="btn btn-solid"
+       th:href="@{/admin/food-items/{restaurantId}/new(restaurantId=${restaurant.id})}">
+      + Add Food Item
+    </a>
+  </div>
+
+  <div class="table">
+    <div class="trow thead" style="grid-template-columns: 80px 1.6fr 1fr 120px 120px 140px 360px;">
+      <div>ID</div>
+      <div>Name</div>
+      <div>Category</div>
+      <div>Veg</div>
+      <div>Price</div>
+      <div>Available</div>
+      <div>Actions</div>
+    </div>
+
+    <div class="trow" th:each="i : ${items}"
+         style="grid-template-columns: 80px 1.6fr 1fr 120px 120px 140px 360px;">
+      <div th:text="${i.id}">1</div>
+      <div th:text="${i.name}">Food</div>
+      <div th:text="${i.category}">Category</div>
+      <div th:text="${i.veg ? 'YES' : 'NO'}">YES</div>
+      <div>₹<b th:text="${i.price}">0</b></div>
+      <div><span class="badge" th:text="${i.available ? 'AVAILABLE' : 'NOT AVAILABLE'}">AVAILABLE</span></div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <a class="btn btn-outline"
+           th:href="@{/admin/food-items/{restaurantId}/edit/{itemId}(restaurantId=${restaurant.id}, itemId=${i.id})}">
+          Edit
+        </a>
+
+        <form th:action="@{/admin/food-items/{restaurantId}/toggle/{itemId}(restaurantId=${restaurant.id}, itemId=${i.id})}"
+              method="post">
+          <button class="btn btn-outline" type="submit"
+                  th:text="${i.available ? 'Make Unavailable' : 'Make Available'}">
+            Toggle
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin - Food Items</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="admin-bg">
+
+<div class="section adminFoodItemsPage">
+
+  <!-- HERO HEADER (same vibe as Add Restaurant) -->
+  <div class="adminFormHero">
+    <div class="adminFormHero-left">
+      <div class="adminFormCrumb">
+        <a th:href="@{/admin/dashboard}">Admin</a>
+        <span> / </span>
+        <a th:href="@{/admin/restaurants}">Restaurants</a>
+        <span> / </span>
+        <span th:text="${restaurant.name}">Restaurant</span>
+        <span> / </span>
+        <span>Food Items</span>
+      </div>
+
+      <div class="adminFormTitleRow">
+        <div class="adminFormIcon">🍲</div>
+        <div>
+          <h2 class="adminFormTitle" th:text="'Food Items - ' + ${restaurant.name}">
+            Food Items
+          </h2>
+          <div class="adminFormSubtitle muted">
+            Add/edit menu items, toggle availability, and keep your menu clean.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="adminFormHero-actions">
+      <a class="btn btn-outline" th:href="@{/admin/restaurants}">Back</a>
+      <a class="btn btn-solid"
+         th:href="@{/admin/food-items/{restaurantId}/new(restaurantId=${restaurant.id})}">
+        + Add Food Item
+      </a>
+    </div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="admin-toolbar" style="margin-top:14px;">
+    <div class="searchbox">
+      <input id="foodSearch" type="text" placeholder="Search food by name / category..." />
+      <div class="muted" style="margin-top:6px;">Example: “biryani”, “paneer”, “pizza”</div>
+    </div>
+
+    <div class="admin-chips">
+      <div class="chipX">
+        <div class="muted">Available</div>
+        <div class="chipX-val" id="availCount">0</div>
+      </div>
+      <div class="chipX">
+        <div class="muted">Unavailable</div>
+        <div class="chipX-val" id="unavailCount">0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIST -->
+  <div class="foodList">
+    <div class="muted" th:if="${#lists.isEmpty(items)}" style="padding:14px;">
+      No food items added yet. Click <b>+ Add Food Item</b>.
+    </div>
+
+    <div class="foodCard"
+         th:each="i : ${items}"
+         th:attr="data-name=${i.name},data-cat=${i.category},data-avail=${i.available},data-veg=${i.veg}"
+         th:with="
+           fImg=${(i.imageUrl != null and !#strings.isEmpty(i.imageUrl))
+                  ? (#strings.startsWith(i.imageUrl,'/') ? i.imageUrl : '/' + i.imageUrl)
+                  : '/images/default-food.jpg'}
+         ">
+
+      <!-- left -->
+      <div class="foodLeft">
+        <img class="foodThumb" th:src="${fImg}" alt="Food">
+
+        <div class="foodMeta">
+          <div class="foodName" th:text="${i.name}">Food Name</div>
+
+          <div class="muted">
+            Category: <b th:text="${i.category}">Category</b>
+            <span class="dotSep">•</span>
+            ID: <b th:text="${i.id}">0</b>
+          </div>
+
+          <div class="foodTags">
+            <span class="tagMini" th:text="${i.veg ? 'VEG' : 'NON-VEG'}"
+                  th:classappend="${i.veg ? ' veg' : ' nonveg'}">VEG</span>
+
+            <span class="tagMini"
+                  th:text="${i.available ? 'AVAILABLE' : 'NOT AVAILABLE'}"
+                  th:classappend="${i.available ? ' on' : ' off'}">AVAILABLE</span>
+
+            <span class="priceMini">₹<b th:text="${i.price}">0</b></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- right -->
+      <div class="foodRight">
+        <a class="btn btn-outline btn-sm"
+           th:href="@{/admin/food-items/{restaurantId}/edit/{itemId}(restaurantId=${restaurant.id}, itemId=${i.id})}">
+          Edit
+        </a>
+
+        <form th:action="@{/admin/food-items/{restaurantId}/toggle/{itemId}(restaurantId=${restaurant.id}, itemId=${i.id})}"
+              method="post" style="display:inline;">
+          <button class="btn btn-outline btn-sm" type="submit"
+                  th:text="${i.available ? 'Make Unavailable' : 'Make Available'}">
+            Toggle
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Search + Available/Unavailable counts
+  (function(){
+    const input = document.getElementById('foodSearch');
+    const cards = Array.from(document.querySelectorAll('.foodCard'));
+
+    function updateCounts(){
+      let a = 0, b = 0;
+      cards.forEach(c=>{
+        if(c.style.display === 'none') return;
+        const avail = (c.dataset.avail === 'true');
+        if(avail) a++; else b++;
+      });
+      document.getElementById('availCount').innerText = a;
+      document.getElementById('unavailCount').innerText = b;
+    }
+
+    function filter(){
+      const q = (input.value || '').toLowerCase().trim();
+      cards.forEach(c=>{
+        const text = `${c.dataset.name} ${c.dataset.cat}`.toLowerCase();
+        c.style.display = text.includes(q) ? '' : 'none';
+      });
+      updateCounts();
+    }
+
+    updateCounts();
+    input.addEventListener('input', filter);
+  })();
+</script>
+
+</body>
+</html>

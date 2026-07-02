@@ -1,0 +1,430 @@
+<!-- <!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manage Restaurants</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+  <div class="section">
+    <h2>Restaurants</h2>
+
+    <div class="actions">
+      <a class="btn btn-outline" th:href="@{/admin/dashboard}">Back</a>
+      <a class="btn btn-solid" th:href="@{/admin/restaurants/new}">+ Add Restaurant</a>
+    </div>
+
+    <div style="margin-top:16px;"></div>
+
+    <table border="1" cellpadding="10" cellspacing="0" style="width:100%; border-collapse:collapse;">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>City</th>
+          <th>Area</th>
+          <th>Active</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="r : ${restaurants}">
+          <td th:text="${r.id}"></td>
+          <td th:text="${r.name}"></td>
+          <td th:text="${r.city}"></td>
+          <td th:text="${r.area}"></td>
+          <td th:text="${r.active}"></td>
+          <td>
+            <a th:href="@{/admin/restaurants/delete/{id}(id=${r.id})}">Delete</a>
+            |
+            <a th:href="@{/admin/food-items/{rid}(rid=${r.id})}">Manage Food</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+</body>
+</html> -->
+
+
+<!-- 
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manage Restaurants</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="section">
+  <h2>Restaurants (Admin)</h2>
+
+  <div class="actions" style="margin-bottom:12px;">
+    <a class="btn btn-outline" th:href="@{/admin/dashboard}">Back</a>
+    <a class="btn btn-solid" th:href="@{/admin/restaurants/new}">+ Add Restaurant</a>
+  </div>
+
+  <div class="table">
+    <div class="trow thead" style="grid-template-columns: 80px 1.4fr 1fr 1fr 120px 360px;">
+      <div>ID</div>
+      <div>Name</div>
+      <div>City</div>
+      <div>Area</div>
+      <div>Active</div>
+      <div>Actions</div>
+    </div>
+
+    <div class="trow" th:each="r : ${restaurants}"
+         style="grid-template-columns: 80px 1.4fr 1fr 1fr 120px 360px;">
+      <div th:text="${r.id}">1</div>
+      <div th:text="${r.name}">Name</div>
+      <div th:text="${r.city}">City</div>
+      <div th:text="${r.area}">Area</div>
+      <div>
+        <span class="badge" th:text="${r.active ? 'ACTIVE' : 'INACTIVE'}">ACTIVE</span>
+      </div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <a class="btn btn-outline" th:href="@{/admin/restaurants/edit/{id}(id=${r.id})}">Edit</a>
+
+        <a class="btn btn-outline" th:href="@{/admin/food-items/{rid}(rid=${r.id})}">
+          Manage Food
+        </a>
+
+        <form th:action="@{/admin/restaurants/{id}/toggle(id=${r.id})}" method="post">
+          <button class="btn btn-outline" type="submit"
+                  th:text="${r.active ? 'Deactivate' : 'Activate'}">
+            Toggle
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html> -->
+
+
+
+<!-- FILE: src/main/resources/templates/admin-restaurants.html -->
+<!-- <!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manage Restaurants</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="admin-bg">
+
+<div class="section admin-restaurants-page">
+
+  Header
+  <div class="admin-page-head">
+    <div>
+      <div class="admin-breadcrumb">
+        <a th:href="@{/admin/dashboard}">Admin</a>
+        <span> / </span>
+        <span>Restaurants</span>
+      </div>
+      <h2 style="margin-top:6px;">Restaurants (Admin)</h2>
+      <div class="muted">
+        Total: <b th:text="${#lists.size(restaurants)}">0</b>
+      </div>
+    </div>
+
+    <div class="admin-head-actions">
+      <a class="btn btn-outline" th:href="@{/admin/dashboard}">Back</a>
+      <a class="btn btn-solid" th:href="@{/admin/restaurants/new}">+ Add Restaurant</a>
+    </div>
+  </div>
+
+  Toolbar
+  <div class="admin-toolbar">
+    <div class="searchbox">
+      <input id="rSearch" type="text" placeholder="Search restaurant / city / area..." />
+      <div class="muted" style="margin-top:6px;">Tip: type “nashik”, “college road”, etc.</div>
+    </div>
+
+    <div class="admin-chips">
+      <div class="chipX">
+        <div class="muted">Active</div>
+        <div class="chipX-val" id="activeCount">0</div>
+      </div>
+      <div class="chipX">
+        <div class="muted">Inactive</div>
+        <div class="chipX-val" id="inactiveCount">0</div>
+      </div>
+    </div>
+  </div>
+
+  List
+  <div class="admin-rtable">
+    <div class="trow thead" style="grid-template-columns: 2.2fr 1.3fr 140px 420px;">
+      <div>Restaurant</div>
+      <div>Location</div>
+      <div>Status</div>
+      <div>Actions</div>
+    </div>
+
+    <div class="trow admin-rrow"
+         th:each="r : ${restaurants}"
+         th:attr="data-name=${r.name},data-city=${r.city},data-area=${r.area},data-active=${r.active}"
+         style="grid-template-columns: 2.2fr 1.3fr 140px 420px;">
+
+      Restaurant column
+      <div class="rcol">
+        <img class="rthumb"
+             th:src="${(r.imageUrl != null and !#strings.isEmpty(r.imageUrl))
+                      ? (#strings.startsWith(r.imageUrl,'/') ? r.imageUrl : '/' + r.imageUrl)
+                      : '/images/default-restaurant.jpg'}"
+             alt="Restaurant">
+
+        <div>
+          <div class="rname" th:text="${r.name}">Restaurant Name</div>
+          <div class="muted">
+            ID: <b th:text="${r.id}">1</b>
+          </div>
+        </div>
+      </div>
+
+      Location column
+      <div>
+        <div style="font-weight:900;" th:text="${r.city}">City</div>
+        <div class="muted" th:text="${r.area != null ? r.area : '-'}">Area</div>
+      </div>
+
+      Status column
+      <div>
+        <span class="statusPill"
+              th:classappend="${r.active ? ' on' : ' off'}"
+              th:text="${r.active ? 'ACTIVE' : 'INACTIVE'}">
+          ACTIVE
+        </span>
+      </div>
+
+      Actions column
+      <div class="actionsRow">
+        <a class="btn btn-outline btn-sm"
+           th:href="@{/admin/restaurants/edit/{id}(id=${r.id})}">
+          Edit
+        </a>
+
+        ✅ Correct link for your controller: /admin/food-items/{restaurantId}
+        <a class="btn btn-outline btn-sm"
+           th:href="@{/admin/food-items/{restaurantId}(restaurantId=${r.id})}">
+          Manage Food
+        </a>
+
+        <form th:action="@{/admin/restaurants/{id}/toggle(id=${r.id})}" method="post" style="display:inline;">
+          <button class="btn btn-outline btn-sm" type="submit"
+                  th:text="${r.active ? 'Deactivate' : 'Activate'}">
+            Toggle
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="muted" th:if="${#lists.isEmpty(restaurants)}" style="padding:14px;">
+      No restaurants added yet.
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Client-side search + active/inactive count (no backend changes)
+  (function(){
+    const input = document.getElementById('rSearch');
+    const rows = Array.from(document.querySelectorAll('.admin-rrow'));
+
+    function updateCounts(){
+      let a=0, b=0;
+      rows.forEach(r=>{
+        if (r.style.display === 'none') return;
+        const active = (r.dataset.active === 'true');
+        if(active) a++; else b++;
+      });
+      document.getElementById('activeCount').innerText = a;
+      document.getElementById('inactiveCount').innerText = b;
+    }
+
+    function filter(){
+      const q = (input.value || '').toLowerCase().trim();
+      rows.forEach(r=>{
+        const text = `${r.dataset.name} ${r.dataset.city} ${r.dataset.area}`.toLowerCase();
+        r.style.display = text.includes(q) ? '' : 'none';
+      });
+      updateCounts();
+    }
+
+    // Initial counts
+    updateCounts();
+
+    input.addEventListener('input', filter);
+  })();
+</script>
+
+</body>
+</html> -->
+
+
+
+
+<!-- FILE: src/main/resources/templates/admin-restaurants.html -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manage Restaurants</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="admin-bg">
+ 
+<div class="section admin-restaurants-page">
+
+  <!-- Header -->
+  <div class="admin-page-head">
+    <div>
+      <div class="admin-breadcrumb">
+        <a th:href="@{/admin/dashboard}">Admin</a>
+        <span> / </span>
+        <span>Restaurants</span>
+      </div>
+
+      <h2 style="margin-top:6px;">Restaurants (Admin)</h2>
+      <div class="muted">
+        Total: <b th:text="${#lists.size(restaurants)}">0</b>
+      </div>
+    </div>
+
+    <div class="admin-head-actions">
+      <a class="btn btn-outline" th:href="@{/admin/dashboard}">Back</a>
+      <a class="btn btn-solid" th:href="@{/admin/restaurants/new}">+ Add Restaurant</a>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="admin-toolbar">
+    <div class="searchbox">
+      <input id="rSearch" type="text" placeholder="Search by restaurant / city / area..." />
+      <div class="muted" style="margin-top:6px;">Example: “nashik”, “college road”, “fogcity”</div>
+    </div>
+
+    <div class="admin-chips">
+      <div class="chipX">
+        <div class="muted">Active</div>
+        <div class="chipX-val" id="activeCount">0</div>
+      </div>
+      <div class="chipX">
+        <div class="muted">Inactive</div>
+        <div class="chipX-val" id="inactiveCount">0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card List -->
+  <div class="rList">
+    <div class="muted" th:if="${#lists.isEmpty(restaurants)}" style="padding:14px;">
+      No restaurants added yet.
+    </div>
+
+    <div class="rCard"
+         th:each="r : ${restaurants}"
+         th:attr="data-name=${r.name},data-city=${r.city},data-area=${r.area},data-active=${r.active}"
+         th:with="
+           rImg=${(r.imageUrl != null and !#strings.isEmpty(r.imageUrl))
+                ? (#strings.startsWith(r.imageUrl,'/') ? r.imageUrl : '/' + r.imageUrl)
+                : '/images/default-restaurant.jpg'}
+         ">
+
+      <div class="rLeft">
+        <img class="rThumb" th:src="${rImg}" alt="Restaurant">
+
+        <div class="rMeta">
+          <div class="rName" th:text="${r.name}">Restaurant Name</div>
+          <div class="muted">
+            ID: <b th:text="${r.id}">0</b>
+            <span th:if="${r.address != null and !#strings.isEmpty(r.address)}"
+                  th:text="' • ' + ${r.address}"> • Address</span>
+          </div>
+
+          <div class="rLoc">
+            <span class="locTag" th:text="${r.city}">City</span>
+            <span class="locDot">•</span>
+            <span class="muted" th:text="${(r.area != null and !#strings.isEmpty(r.area)) ? r.area : '-'}">Area</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="rRight">
+        <span class="statusPill"
+              th:classappend="${r.active ? ' on' : ' off'}"
+              th:text="${r.active ? 'ACTIVE' : 'INACTIVE'}">ACTIVE</span>
+
+        <div class="rActions">
+          <a class="btn btn-outline btn-sm"
+             th:href="@{/admin/restaurants/edit/{id}(id=${r.id})}">Edit</a>
+
+          <!-- Correct URL for your AdminFoodItemController -->
+          <a class="btn btn-outline btn-sm"
+             th:href="@{/admin/food-items/{restaurantId}(restaurantId=${r.id})}">
+            Manage Food
+          </a>
+
+          <form th:action="@{/admin/restaurants/{id}/toggle(id=${r.id})}"
+                method="post" style="display:inline;">
+            <button class="btn btn-outline btn-sm" type="submit"
+                    th:text="${r.active ? 'Deactivate' : 'Activate'}">Toggle</button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Search + active/inactive count (client-side)
+  (function(){
+    const input = document.getElementById('rSearch');
+    const cards = Array.from(document.querySelectorAll('.rCard'));
+
+    function updateCounts(){
+      let a=0, b=0;
+      cards.forEach(c=>{
+        if (c.style.display === 'none') return;
+        const active = (c.dataset.active === 'true');
+        if(active) a++; else b++;
+      });
+      document.getElementById('activeCount').innerText = a;
+      document.getElementById('inactiveCount').innerText = b;
+    }
+
+    function filter(){
+      const q = (input.value || '').toLowerCase().trim();
+      cards.forEach(c=>{
+        const text = `${c.dataset.name} ${c.dataset.city} ${c.dataset.area}`.toLowerCase();
+        c.style.display = text.includes(q) ? '' : 'none';
+      });
+      updateCounts();
+    }
+
+    updateCounts();
+    input.addEventListener('input', filter);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Order Placed</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="navbar">
+  <div class="logo">
+    <img th:src="@{/images/logo.png}" alt="Logo">
+    <span>FoodFrenzy</span>
+  </div>
+  <div class="nav-actions">
+    <a class="btn btn-outline" th:href="@{/}">Home</a>
+  </div>
+</header>
+
+<div class="section">
+  <h2>Order Placed Successfully</h2>
+  <p style="margin-top:10px;">
+    Your Order ID: <b th:text="${orderId}">0</b>
+  </p>
+
+  <div class="actions" style="margin-top:14px;">
+    <a class="btn btn-solid" th:href="@{/}">Continue Browsing</a>
+    <!-- Next step we will create tracking page and change this link -->
+    <a class="btn btn-outline" th:href="@{/}">Track Order (next step)</a>
+  </div>
+</div>
+
+</body>
+</html>

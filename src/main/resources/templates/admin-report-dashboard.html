@@ -1,0 +1,181 @@
+<!-- <!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Reports Dashboard</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="section">
+  <h2>Reports & Dashboard (Admin)</h2>
+
+  <div class="actions" style="margin-bottom:12px;">
+    <a class="btn btn-outline" th:href="@{/admin/dashboard}">Back</a>
+    <a class="btn btn-solid" th:href="@{/admin/reports/top-items}">Top Selling Items</a>
+    <a class="btn btn-outline" th:href="@{/admin/orders}">Orders</a>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="muted">Total Orders</div>
+      <div class="kpi-value" th:text="${totalOrders}">0</div>
+    </div>
+
+    <div class="kpi">
+      <div class="muted">Total Revenue (PAID)</div>
+      <div class="kpi-value">₹<span th:text="${totalRevenuePaid}">0</span></div>
+    </div>
+
+    <div class="kpi">
+      <div class="muted">Today Orders</div>
+      <div class="kpi-value" th:text="${todayOrders}">0</div>
+    </div>
+
+    <div class="kpi">
+      <div class="muted">Today Revenue (PAID)</div>
+      <div class="kpi-value">₹<span th:text="${todayRevenuePaid}">0</span></div>
+    </div>
+  </div>
+
+  <hr class="hr">
+
+  <h3>Orders by Status</h3>
+  <div class="table" style="max-width:520px;">
+    <div class="trow thead" style="grid-template-columns: 1fr 140px;">
+      <div>Status</div>
+      <div>Count</div>
+    </div>
+
+    <div class="trow" th:each="e : ${ordersByStatus.entrySet()}" style="grid-template-columns: 1fr 140px;">
+      <div><span class="badge" th:text="${e.key}">CREATED</span></div>
+      <div th:text="${e.value}">0</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Reports Dashboard</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="admin-bg">
+
+<div class="section">
+
+  <!-- HERO -->
+  <div class="adminFormHero">
+    <div class="adminFormHero-left">
+      <div class="adminFormCrumb">
+        <a th:href="@{/admin/dashboard}">Admin</a>
+        <span> / </span>
+        <span>Reports</span>
+      </div>
+
+      <div class="adminFormTitleRow">
+        <div class="adminFormIcon">📊</div>
+        <div>
+          <h2 class="adminFormTitle">Reports & Dashboard</h2>
+          <div class="adminFormSubtitle muted">
+            Track orders and paid revenue. Use Top Items for best-selling food analysis.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="adminFormHero-actions">
+      <a class="btn btn-outline" th:href="@{/admin/dashboard}">Back</a>
+      <a class="btn btn-solid" th:href="@{/admin/reports/top-items}">Top Selling Items</a>
+      <a class="btn btn-outline" th:href="@{/admin/orders}">Orders</a>
+    </div>
+  </div>
+
+  <!-- KPI -->
+  <div class="reportKpiGrid">
+    <div class="reportKpi tone-red">
+      <div class="kTop">
+        <div class="kLabel">Total Orders</div>
+        <div class="kIcon">📦</div>
+      </div>
+      <div class="kVal" th:text="${totalOrders}">0</div>
+      <div class="muted">All time</div>
+    </div>
+
+    <div class="reportKpi tone-green">
+      <div class="kTop">
+        <div class="kLabel">Total Revenue (PAID)</div>
+        <div class="kIcon">💰</div>
+      </div>
+      <div class="kVal">₹<span th:text="${totalRevenuePaid}">0</span></div>
+      <div class="muted">Paid transactions only</div>
+    </div>
+
+    <div class="reportKpi tone-indigo">
+      <div class="kTop">
+        <div class="kLabel">Today Orders</div>
+        <div class="kIcon">🗓️</div>
+      </div>
+      <div class="kVal" th:text="${todayOrders}">0</div>
+      <div class="muted">Since 00:00</div>
+    </div>
+
+    <div class="reportKpi tone-amber">
+      <div class="kTop">
+        <div class="kLabel">Today Revenue (PAID)</div>
+        <div class="kIcon">⚡</div>
+      </div>
+      <div class="kVal">₹<span th:text="${todayRevenuePaid}">0</span></div>
+      <div class="muted">Paid today</div>
+    </div>
+  </div>
+
+  <!-- STATUS OVERVIEW -->
+  <div class="reportPanel" th:with="t=${totalOrders}">
+    <div class="reportPanelHead">
+      <div>
+        <div class="panelTitle">Orders by Status</div>
+        <div class="muted">Visual distribution of current order status</div>
+      </div>
+      <a class="btn btn-outline" th:href="@{/admin/orders}">Open Orders</a>
+    </div>
+
+    <div class="statusBars">
+      <div class="statusBarRow"
+           th:each="e : ${ordersByStatus.entrySet()}"
+           th:with="pct=${t > 0 ? (e.value * 100.0 / t) : 0}">
+        <div class="sbLeft">
+          <span class="pill st"
+                th:classappend="' status-' + ${#strings.toLowerCase(e.key.name())}"
+                th:text="${e.key}">
+            CREATED
+          </span>
+        </div>
+
+        <div class="sbTrack">
+          <div class="sbFill"
+               th:style="'width:' + ${pct} + '%'"
+               th:classappend="' statusFill-' + ${#strings.toLowerCase(e.key.name())}">
+          </div>
+        </div>
+
+        <div class="sbRight">
+          <b th:text="${e.value}">0</b>
+          <span class="muted" th:text="'(' + ${#numbers.formatDecimal(pct,1,1)} + '%)'">(0%)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

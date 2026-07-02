@@ -1,0 +1,299 @@
+<!-- 
+
+
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="${restaurant.name} + ' - Menu'">Restaurant Menu</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="navbar">
+  <div class="logo">
+    <img th:src="@{/images/logo.png}" alt="Logo">
+    <span>FoodFrenzy</span>
+  </div>
+
+  <div class="nav-actions">
+    <a class="btn btn-outline" th:href="@{/}">Home</a>
+
+    Back to Group button (only if groupCode exists in URL)
+    <a class="btn btn-outline"
+       th:if="${param.groupCode != null}"
+       th:href="@{/group/{code}(code=${param.groupCode[0]})}">
+      Back to Group
+    </a>
+
+    <div class="auth-buttons" th:if="${session.userName == null}">
+      <a class="btn btn-outline" th:href="@{/login}">Login</a>
+      <a class="btn btn-solid" th:href="@{/register}">Create Account</a>
+    </div>
+
+    <div class="auth-buttons user-area" th:if="${session.userName != null}">
+      <a class="btn btn-outline" th:href="@{/cart}">Cart</a>
+
+      <span class="hello">Hello, <b th:text="${session.userName}">User</b></span>
+      <a class="btn btn-outline" th:href="@{/logout}">Logout</a>
+    </div>
+  </div>
+</header>
+
+<div class="section">
+  <h2 th:text="${restaurant.name}">Restaurant</h2>
+  <p class="muted"
+     th:text="${restaurant.city + (restaurant.area != null and !#strings.isEmpty(restaurant.area) ? (' - ' + restaurant.area) : '')}">
+    City - Area
+  </p>
+
+  Show group code if present
+  <p class="muted" th:if="${param.groupCode != null}" style="margin-top:6px;">
+    Group Order Code: <b th:text="${param.groupCode[0]}">CODE</b>
+  </p>
+
+  <hr class="hr">
+
+  <h3>Menu</h3>
+
+  show message from URL like /restaurants/4?msg=...
+  <p class="error" th:if="${param.msg}" th:text="${param.msg[0]}"></p>
+  <p class="msg" th:if="${param.ok}" th:text="${param.ok[0]}"></p>
+
+  <div class="muted" th:if="${#lists.isEmpty(items)}" style="margin-top:10px;">
+    No food items added for this restaurant yet (Admin can add food items).
+  </div>
+
+  <div class="menu-list" th:if="${!#lists.isEmpty(items)}">
+    <div class="menu-item" th:each="i : ${items}">
+      <img class="menu-img"
+           th:src="${(i.imageUrl != null and !#strings.isEmpty(i.imageUrl))
+                    ? (#strings.startsWith(i.imageUrl,'/') ? i.imageUrl : '/' + i.imageUrl)
+                    : '/images/default-food.jpg'}"
+           alt="Food">
+
+      <div class="menu-info">
+        <h4 th:text="${i.name}">Food Name</h4>
+        <p class="muted" th:text="${i.category}">Category</p>
+
+        <p style="margin-top:6px;">
+          Price: ₹<b th:text="${i.price}">0</b>
+          <span class="muted" th:text="${i.veg ? ' (Veg)' : ' (Non-Veg)'}"></span>
+        </p>
+
+        GROUP ORDER add (when groupCode present)
+        <form th:if="${param.groupCode != null}"
+              th:action="@{/group/{code}/add(code=${param.groupCode[0]})}"
+              method="post"
+              style="margin-top:10px;">
+          <input type="hidden" name="foodItemId" th:value="${i.id}">
+          <input type="hidden" name="restaurantId" th:value="${restaurant.id}">
+          <button class="btn btn-solid" type="submit">Add to Group Order</button>
+        </form>
+
+        NORMAL CART add (when NOT group)
+        <form th:if="${param.groupCode == null}"
+              th:action="@{/cart/add}"
+              method="post"
+              style="margin-top:10px;">
+          <input type="hidden" name="foodItemId" th:value="${i.id}">
+          <input type="hidden" name="restaurantId" th:value="${restaurant.id}">
+          <button class="btn btn-solid" type="submit">Add to Cart</button>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  Recommended on this restaurant page (Step 11.3)
+  <div th:if="${menuRecommendedItems != null}">
+    <hr class="hr">
+
+    <h3>Recommended for you</h3>
+    <p class="muted" th:if="${menuRecommendReason != null}" th:text="${menuRecommendReason}"></p>
+
+    <div class="grid" th:if="${!#lists.isEmpty(menuRecommendedItems)}">
+      <div class="card" th:each="f : ${menuRecommendedItems}">
+        <img class="card-img"
+             th:src="${(f.imageUrl != null and !#strings.isEmpty(f.imageUrl)) ? f.imageUrl : '/images/default-food.jpg'}"
+             alt="Food">
+
+        <div class="card-body">
+          <h3 th:text="${f.name}">Food</h3>
+          <p class="muted" th:text="${f.category}">Category</p>
+          <p style="margin-top:6px;">₹<b th:text="${f.price}">0</b></p>
+
+          GROUP ORDER add (when groupCode present)
+          <form th:if="${param.groupCode != null}"
+                th:action="@{/group/{code}/add(code=${param.groupCode[0]})}"
+                method="post"
+                style="margin-top:10px;">
+            <input type="hidden" name="foodItemId" th:value="${f.id}">
+            <input type="hidden" name="restaurantId" th:value="${restaurant.id}">
+            <button class="btn btn-solid" type="submit">Add to Group Order</button>
+          </form>
+
+          NORMAL CART add (when NOT group)
+          <form th:if="${param.groupCode == null}"
+                th:action="@{/cart/add}"
+                method="post"
+                style="margin-top:10px;">
+            <input type="hidden" name="foodItemId" th:value="${f.id}">
+            <input type="hidden" name="restaurantId" th:value="${restaurant.id}">
+            <button class="btn btn-solid" type="submit">Add to Cart</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="muted" th:if="${#lists.isEmpty(menuRecommendedItems)}" style="margin-top:10px;">
+      No recommendations right now.
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html> -->
+
+
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="${restaurant.name} + ' - Menu'">Restaurant Menu</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+  <!-- Common Navbar -->
+  <div th:replace="~{fragments/navbar :: appNavbar}"></div>
+
+  <!-- Back to Group (only if groupCode exists) -->
+  <div class="section" th:if="${param.groupCode != null}" style="padding-top:12px;">
+    <a class="btn btn-outline"
+       th:href="@{/group/{code}(code=${param.groupCode[0]})}">
+      Back to Group
+    </a>
+
+    <span class="muted" style="margin-left:10px;">
+      Group Order Code: <b th:text="${param.groupCode[0]}">CODE</b>
+    </span>
+  </div>
+
+  <div class="section">
+    <h2 th:text="${restaurant.name}">Restaurant</h2>
+    <p class="muted"
+       th:text="${restaurant.city + (restaurant.area != null and !#strings.isEmpty(restaurant.area) ? (' - ' + restaurant.area) : '')}">
+      City - Area
+    </p>
+
+    <hr class="hr">
+
+    <h3>Menu</h3>
+
+    <!-- show message from URL like /restaurants/4?msg=... -->
+    <p class="error" th:if="${param.msg}" th:text="${param.msg[0]}"></p>
+    <p class="msg" th:if="${param.ok}" th:text="${param.ok[0]}"></p>
+
+    <div class="muted" th:if="${#lists.isEmpty(items)}" style="margin-top:10px;">
+      No food items added for this restaurant yet (Admin can add food items).
+    </div>
+
+    <div class="menu-list" th:if="${!#lists.isEmpty(items)}">
+      <div class="menu-item" th:each="i : ${items}">
+        <img class="menu-img"
+             th:src="${(i.imageUrl != null and !#strings.isEmpty(i.imageUrl))
+                      ? (#strings.startsWith(i.imageUrl,'/') ? i.imageUrl : '/' + i.imageUrl)
+                      : '/images/default-food.jpg'}"
+             alt="Food">
+
+        <div class="menu-info">
+          <h4 th:text="${i.name}">Food Name</h4>
+          <p class="muted" th:text="${i.category}">Category</p>
+
+          <p style="margin-top:6px;">
+            Price: ₹<b th:text="${i.price}">0</b>
+            <span class="muted" th:text="${i.veg ? ' (Veg)' : ' (Non-Veg)'}"></span>
+          </p>
+
+          <!-- GROUP ORDER add (when groupCode present) -->
+          <form th:if="${param.groupCode != null}"
+                th:action="@{/group/{code}/add(code=${param.groupCode[0]})}"
+                method="post"
+                style="margin-top:10px;">
+            <input type="hidden" name="foodItemId" th:value="${i.id}">
+            <input type="hidden" name="restaurantId" th:value="${restaurant.id}">
+            <button class="btn btn-solid" type="submit">Add to Group Order</button>
+          </form>
+
+          <!-- NORMAL CART add (when NOT group) -->
+          <form th:if="${param.groupCode == null}"
+                th:action="@{/cart/add}"
+                method="post"
+                style="margin-top:10px;">
+            <input type="hidden" name="foodItemId" th:value="${i.id}">
+            <input type="hidden" name="restaurantId" th:value="${restaurant.id}">
+            <button class="btn btn-solid" type="submit">Add to Cart</button>
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Recommended on this restaurant page (Step 11.3) -->
+    <div th:if="${menuRecommendedItems != null}">
+      <hr class="hr">
+
+      <h3>Recommended for you</h3>
+      <p class="muted" th:if="${menuRecommendReason != null}" th:text="${menuRecommendReason}"></p>
+
+      <div class="grid" th:if="${!#lists.isEmpty(menuRecommendedItems)}">
+        <div class="card" th:each="f : ${menuRecommendedItems}">
+          <img class="card-img"
+               th:src="${(f.imageUrl != null and !#strings.isEmpty(f.imageUrl)) ? f.imageUrl : '/images/default-food.jpg'}"
+               alt="Food">
+
+          <div class="card-body">
+            <h3 th:text="${f.name}">Food</h3>
+            <p class="muted" th:text="${f.category}">Category</p>
+            <p style="margin-top:6px;">₹<b th:text="${f.price}">0</b></p>
+
+            <!-- GROUP ORDER add (when groupCode present) -->
+            <form th:if="${param.groupCode != null}"
+                  th:action="@{/group/{code}/add(code=${param.groupCode[0]})}"
+                  method="post"
+                  style="margin-top:10px;">
+              <input type="hidden" name="foodItemId" th:value="${f.id}">
+              <input type="hidden" name="restaurantId" th:value="${restaurant.id}">
+              <button class="btn btn-solid" type="submit">Add to Group Order</button>
+            </form>
+
+            <!-- NORMAL CART add (when NOT group) -->
+            <form th:if="${param.groupCode == null}"
+                  th:action="@{/cart/add}"
+                  method="post"
+                  style="margin-top:10px;">
+              <input type="hidden" name="foodItemId" th:value="${f.id}">
+              <input type="hidden" name="restaurantId" th:value="${restaurant.id}">
+              <button class="btn btn-solid" type="submit">Add to Cart</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="muted" th:if="${#lists.isEmpty(menuRecommendedItems)}" style="margin-top:10px;">
+        No recommendations right now.
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

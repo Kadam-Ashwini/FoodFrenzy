@@ -1,0 +1,232 @@
+<!-- <!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Feedback</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+  Common Navbar
+  <div th:replace="~{fragments/navbar :: appNavbar}"></div>
+
+  <div class="section">
+    <div class="actions" style="margin-bottom:12px;">
+      <a class="btn btn-outline" th:href="@{/orders/{id}(id=${order.id})}">Back to Order</a>
+    </div>
+
+    <h2>Restaurant Feedback</h2>
+
+    <p class="error" th:if="${param.msg}" th:text="${param.msg[0]}"></p>
+
+    <div class="panel" style="max-width:720px;">
+      <div class="order-meta">
+        <div><span class="muted">Order:</span> <b th:text="${order.id}">0</b></div>
+        <div><span class="muted">Restaurant:</span> <b th:text="${order.restaurant.name}">R</b></div>
+        <div><span class="muted">Status:</span> <span class="badge" th:text="${order.status}">DELIVERED</span></div>
+      </div>
+
+      If already submitted
+      <div th:if="${existing != null}" style="margin-top:14px;">
+        <h3>Submitted Feedback</h3>
+        <p style="margin-top:8px;">Rating: <b th:text="${existing.rating}">5</b>/5</p>
+        <p class="muted" th:if="${existing.comment != null}" th:text="${existing.comment}"></p>
+      </div>
+
+      New feedback
+      <form th:if="${existing == null}" th:action="@{/feedback/order/{id}(id=${order.id})}"
+            method="post" style="margin-top:14px; display:grid; gap:10px;">
+
+        <label class="muted">Rating (1 to 5)</label>
+        <select name="rating" required style="padding:12px; border:1px solid #ddd; border-radius:10px; background:#fff;">
+          <option value="5">5 - Excellent</option>
+          <option value="4">4 - Good</option>
+          <option value="3">3 - Average</option>
+          <option value="2">2 - Poor</option>
+          <option value="1">1 - Bad</option>
+        </select>
+
+        <label class="muted">Comment</label>
+        <textarea name="comment" rows="4" placeholder="Write your feedback..."
+                  style="padding:12px; border:1px solid #ddd; border-radius:10px;"></textarea>
+
+        <button class="btn btn-solid" type="submit">Submit Feedback</button>
+      </form>
+    </div>
+  </div>
+
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Feedback</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="feedback-bg">
+
+<div th:replace="~{fragments/navbar :: appNavbar}"></div>
+
+<div class="section feedbackPage">
+
+  <div class="feedbackHead">
+    <div>
+      <h2 style="margin-bottom:6px;">Restaurant Feedback</h2>
+      <div class="muted">Help us improve by sharing your experience.</div>
+    </div>
+    <a class="btn btn-outline" th:href="@{/orders/{id}(id=${order.id})}">Back to Order</a>
+  </div>
+
+  <p class="error" th:if="${param.msg}" th:text="${param.msg[0]}"></p>
+
+  <div class="feedbackGrid">
+    <!-- LEFT: Order info -->
+    <div class="fbCardUser">
+      <div class="cardTitleX">
+        <span class="cardIconX">🧾</span>
+        <span>Order Details</span>
+      </div>
+
+      <div class="fbInfo">
+        <div class="fbRow">
+          <span class="muted">Order</span>
+          <b th:text="${order.id}">0</b>
+        </div>
+        <div class="fbRow">
+          <span class="muted">Restaurant</span>
+          <b th:text="${order.restaurant.name}">R</b>
+        </div>
+        <div class="fbRow">
+          <span class="muted">Status</span>
+          <span class="pill" th:text="${order.status}"
+                th:classappend="' status-' + ${#strings.toLowerCase(order.status.name())}">
+            DELIVERED
+          </span>
+        </div>
+      </div>
+
+      <div class="muted" style="margin-top:12px;">
+        Tip: Feedback is allowed only after delivery.
+      </div>
+    </div>
+
+    <!-- RIGHT: Feedback box -->
+    <div class="fbCardUser">
+      <div class="cardTitleX">
+        <span class="cardIconX">⭐</span>
+        <span>Write Feedback</span>
+      </div>
+
+      <!-- If already submitted -->
+      <div th:if="${existing != null}" class="fbSubmitted">
+        <div class="submittedTitle">Feedback Submitted</div>
+
+        <div class="starsBig" th:attr="data-stars=${existing.rating}">
+          <span class="star" th:classappend="${existing.rating >= 1} ? ' filled' : ''">★</span>
+          <span class="star" th:classappend="${existing.rating >= 2} ? ' filled' : ''">★</span>
+          <span class="star" th:classappend="${existing.rating >= 3} ? ' filled' : ''">★</span>
+          <span class="star" th:classappend="${existing.rating >= 4} ? ' filled' : ''">★</span>
+          <span class="star" th:classappend="${existing.rating >= 5} ? ' filled' : ''">★</span>
+        </div>
+
+        <div class="muted" style="margin-top:8px;">
+          Rating: <b th:text="${existing.rating}">5</b>/5
+        </div>
+
+        <div class="fbCommentBox" th:if="${existing.comment != null and !#strings.isEmpty(existing.comment)}"
+             th:text="${existing.comment}">
+          Comment
+        </div>
+
+        <a class="btn btn-outline" th:href="@{/orders/{id}(id=${order.id})}" style="margin-top:12px;">
+          Back to Order
+        </a>
+      </div>
+
+      <!-- New feedback form -->
+      <form th:if="${existing == null}"
+            th:action="@{/feedback/order/{id}(id=${order.id})}"
+            method="post"
+            class="fbForm">
+
+        <!-- Star rating UI (clickable) -->
+        <div class="muted" style="font-weight:1000;">Rating</div>
+
+        <div class="starPicker" id="starPicker">
+          <button type="button" class="sBtn" data-v="1">★</button>
+          <button type="button" class="sBtn" data-v="2">★</button>
+          <button type="button" class="sBtn" data-v="3">★</button>
+          <button type="button" class="sBtn" data-v="4">★</button>
+          <button type="button" class="sBtn" data-v="5">★</button>
+          <span class="muted" id="ratingText" style="margin-left:10px;">5 - Excellent</span>
+        </div>
+
+        <!-- Hidden select (backend expects rating param) -->
+        <select name="rating" id="ratingSelect" required style="display:none;">
+          <option value="5" selected>5</option>
+          <option value="4">4</option>
+          <option value="3">3</option>
+          <option value="2">2</option>
+          <option value="1">1</option>
+        </select>
+
+        <div class="fieldX2">
+          <label class="muted">Comment</label>
+          <textarea name="comment" rows="5" placeholder="Write your feedback..."></textarea>
+        </div>
+
+        <button class="btn btn-solid w100" type="submit">Submit Feedback</button>
+
+        <div class="muted" style="margin-top:10px;">
+          Your feedback helps improve service quality.
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  (function(){
+    const picker = document.getElementById('starPicker');
+    if(!picker) return;
+
+    const btns = Array.from(picker.querySelectorAll('.sBtn'));
+    const select = document.getElementById('ratingSelect');
+    const txt = document.getElementById('ratingText');
+
+    const labels = {
+      1: "1 - Bad",
+      2: "2 - Poor",
+      3: "3 - Average",
+      4: "4 - Good",
+      5: "5 - Excellent"
+    };
+
+    function setStars(v){
+      btns.forEach(b=>{
+        const bv = parseInt(b.dataset.v,10);
+        b.classList.toggle('on', bv <= v);
+      });
+      select.value = String(v);
+      txt.textContent = labels[v] || (v + "/5");
+    }
+
+    // default
+    setStars(5);
+
+    btns.forEach(b=>{
+      b.addEventListener('click', ()=> setStars(parseInt(b.dataset.v,10)));
+    });
+  })();
+</script>
+
+</body>
+</html>

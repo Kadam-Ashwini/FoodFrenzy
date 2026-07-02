@@ -1,0 +1,518 @@
+<!-- <!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="'Admin - Order #' + ${order.id}">Admin Order Details</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="section">
+  <h2 th:text="'Order #' + ${order.id} + ' (Admin)'">Order</h2>
+
+  <p class="msg" th:if="${param.ok}" th:text="${param.ok[0]}"></p>
+
+  <div class="actions" style="margin-bottom:12px;">
+    <a class="btn btn-outline" th:href="@{/admin/orders}">Back</a>
+    <a class="btn btn-outline" th:href="@{/admin/dashboard}">Dashboard</a>
+  </div>
+
+  <div class="two-col">
+    <div class="panel">
+      <h3>Order Info</h3>
+
+      <div class="order-meta">
+        <div><span class="muted">User:</span> <b th:text="${order.user.fullName}">User</b></div>
+        <div><span class="muted">Email:</span> <b th:text="${order.user.email}">email</b></div>
+        <div><span class="muted">Restaurant:</span> <b th:text="${order.restaurant.name}">R</b></div>
+        <div><span class="muted">Total:</span> ₹<b th:text="${order.totalAmount}">0</b></div>
+        <div><span class="muted">Payment Status:</span> <b th:text="${order.paymentStatus}">PENDING</b></div>
+        <div th:if="${order.paymentMethod != null}">
+          <span class="muted">Payment Method:</span> <b th:text="${order.paymentMethod}">UPI</b>
+        </div>
+        <div th:if="${order.paymentRef != null}">
+          <span class="muted">Payment Ref:</span> <b th:text="${order.paymentRef}">PAY-XXX</b>
+        </div>
+        <div><span class="muted">Status:</span> <span class="badge" th:text="${order.status}">CREATED</span></div>
+        <div><span class="muted">City:</span> <b th:text="${order.city}">City</b></div>
+        <div><span class="muted">Address:</span> <b th:text="${order.deliveryAddress}">Address</b></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Update Status</h3>
+
+      <form th:action="@{/admin/orders/{id}/status(id=${order.id})}" method="post" class="status-form">
+        <select name="status">
+          <option th:each="s : ${statuses}"
+                  th:value="${s}"
+                  th:text="${s}"
+                  th:selected="${s == order.status}">
+          </option>
+        </select>
+        <button class="btn btn-solid" type="submit">Save</button>
+      </form>
+
+      <div class="muted" style="margin-top:10px;">
+        Tip: Cancelled/Delivered orders should not be changed.
+      </div>
+    </div>
+  </div>
+
+  <hr class="hr">
+
+  <h3>Items</h3>
+  <div class="order-items">
+    <div class="order-item" th:each="i : ${items}">
+      <div>
+        <b th:text="${i.foodName}">Food</b>
+        <div class="muted" th:text="${i.category + ' • ' + (i.veg ? 'Veg' : 'Non-Veg')}">Meta</div>
+        <div class="muted" th:text="'Qty: ' + ${i.quantity}">Qty</div>
+      </div>
+      <div>₹<b th:text="${i.lineTotal}">0</b></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html> -->
+
+<!-- 
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="'Admin - Order #' + ${order.id}">Admin Order Details</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="section">
+  <h2 th:text="'Order #' + ${order.id} + ' (Admin)'">Order</h2>
+
+  <p class="msg" th:if="${param.ok}" th:text="${param.ok[0]}"></p>
+  <p class="error" th:if="${param.msg}" th:text="${param.msg[0]}"></p>
+
+  <div class="actions" style="margin-bottom:12px;">
+    <a class="btn btn-outline" th:href="@{/admin/orders}">Back</a>
+    <a class="btn btn-outline" th:href="@{/admin/dashboard}">Dashboard</a>
+  </div>
+
+  <div class="two-col">
+    <div class="panel">
+      <h3>Order Info</h3>
+
+      <div class="order-meta">
+        <div><span class="muted">User:</span> <b th:text="${order.user.fullName}">User</b></div>
+        <div><span class="muted">Email:</span> <b th:text="${order.user.email}">email</b></div>
+        <div><span class="muted">Restaurant:</span> <b th:text="${order.restaurant.name}">R</b></div>
+        <div><span class="muted">Total:</span> ₹<b th:text="${order.totalAmount}">0</b></div>
+
+        <div><span class="muted">Payment Status:</span> <b th:text="${order.paymentStatus}">PENDING</b></div>
+        <div th:if="${order.paymentMethod != null}">
+          <span class="muted">Payment Method:</span> <b th:text="${order.paymentMethod}">COD</b>
+        </div>
+        <div th:if="${order.paymentRef != null}">
+          <span class="muted">Payment Ref:</span> <b th:text="${order.paymentRef}">PAY-XXX</b>
+        </div>
+
+        <div><span class="muted">Status:</span> <span class="badge" th:text="${order.status}">CREATED</span></div>
+        <div><span class="muted">City:</span> <b th:text="${order.city}">City</b></div>
+        <div><span class="muted">Address:</span> <b th:text="${order.deliveryAddress}">Address</b></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Update Status</h3>
+
+      If CANCELLED or DELIVERED -> don't show form
+      <div th:if="${order.status.name() == 'CANCELLED' or order.status.name() == 'DELIVERED'}"
+           class="muted" style="margin-top:10px;">
+        This order is <b th:text="${order.status}">CANCELLED</b>. Status cannot be changed.
+      </div>
+
+      Else show form
+      <form th:if="${!(order.status.name() == 'CANCELLED' or order.status.name() == 'DELIVERED')}"
+            th:action="@{/admin/orders/{id}/status(id=${order.id})}"
+            method="post"
+            class="status-form">
+
+        <select name="status">
+          <option th:each="s : ${statuses}"
+                  th:value="${s}"
+                  th:text="${s}"
+                  th:selected="${s == order.status}">
+          </option>
+        </select>
+
+        <button class="btn btn-solid" type="submit">Save</button>
+      </form>
+    </div>
+  </div>
+
+  <hr class="hr">
+
+  <h3>Items</h3>
+  <div class="order-items">
+    <div class="order-item" th:each="i : ${items}">
+      <div>
+        <b th:text="${i.foodName}">Food</b>
+        <div class="muted" th:text="${i.category + ' • ' + (i.veg ? 'Veg' : 'Non-Veg')}">Meta</div>
+        <div class="muted" th:text="'Qty: ' + ${i.quantity}">Qty</div>
+      </div>
+      <div>₹<b th:text="${i.lineTotal}">0</b></div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html> -->
+
+<!-- 
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="'Admin - Order #' + ${order.id}">Admin Order Details</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body >
+
+<div class="section">
+  <h2 th:text="'Order #' + ${order.id} + ' (Admin)'">Order</h2>
+
+  <p class="msg" th:if="${param.ok}" th:text="${param.ok[0]}"></p>
+  <p class="error" th:if="${param.msg}" th:text="${param.msg[0]}"></p>
+
+  <div class="actions" style="margin-bottom:12px;">
+    <a class="btn btn-outline" th:href="@{/admin/orders}">Back</a>
+    <a class="btn btn-outline" th:href="@{/admin/dashboard}">Dashboard</a>
+  </div>
+
+  <div class="two-col">
+    <div class="panel">
+      <h3>Order Info</h3>
+
+      <div class="order-meta">
+        <div><span class="muted">User:</span> <b th:text="${order.user.fullName}">User</b></div>
+        <div><span class="muted">Email:</span> <b th:text="${order.user.email}">email</b></div>
+        <div><span class="muted">Restaurant:</span> <b th:text="${order.restaurant.name}">R</b></div>
+        <div><span class="muted">Total:</span> ₹<b th:text="${order.totalAmount}">0</b></div>
+
+        <div><span class="muted">Payment Status:</span> <b th:text="${order.paymentStatus}">PENDING</b></div>
+        <div th:if="${order.paymentMethod != null}">
+          <span class="muted">Payment Method:</span> <b th:text="${order.paymentMethod}">COD</b>
+        </div>
+        <div th:if="${order.paymentRef != null}">
+          <span class="muted">Payment Ref:</span> <b th:text="${order.paymentRef}">PAY-XXX</b>
+        </div>
+
+        <div><span class="muted">Status:</span> <span class="badge" th:text="${order.status}">CREATED</span></div>
+        <div><span class="muted">City:</span> <b th:text="${order.city}">City</b></div>
+        <div><span class="muted">Address:</span> <b th:text="${order.deliveryAddress}">Address</b></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Update Status</h3>
+
+      If CANCELLED or DELIVERED -> don't show status change form
+      <div th:if="${order.status.name() == 'CANCELLED' or order.status.name() == 'DELIVERED'}"
+           class="muted" style="margin-top:10px;">
+        This order is <b th:text="${order.status}">CANCELLED</b>. Status cannot be changed.
+      </div>
+
+      Else show status form
+      <form th:if="${!(order.status.name() == 'CANCELLED' or order.status.name() == 'DELIVERED')}"
+            th:action="@{/admin/orders/{id}/status(id=${order.id})}"
+            method="post"
+            class="status-form">
+
+        <select name="status">
+          <option th:each="s : ${statuses}"
+                  th:value="${s}"
+                  th:text="${s}"
+                  th:selected="${s == order.status}">
+          </option>
+        </select>
+
+        <button class="btn btn-solid" type="submit">Save</button>
+      </form>
+
+      <hr class="hr">
+
+      <h3>Delivery Boy</h3>
+
+      Show assigned delivery boy
+      <div th:if="${assignment != null}" class="muted" style="margin-top:8px;">
+        Assigned to:
+        <b th:text="${assignment.agent.name}">Agent</b>
+        (<span th:text="${assignment.agent.phone}">phone</span>)
+        <span th:if="${assignment.agent.vehicleNo != null}">
+          • Vehicle: <b th:text="${assignment.agent.vehicleNo}">VEH</b>
+        </span>
+      </div>
+
+      Assign delivery boy (disable if CANCELLED/DELIVERED)
+      <div th:if="${order.status.name() == 'CANCELLED' or order.status.name() == 'DELIVERED'}"
+           class="muted" style="margin-top:10px;">
+        Delivery assignment is disabled for CANCELLED/DELIVERED orders.
+      </div>
+
+      <form th:if="${!(order.status.name() == 'CANCELLED' or order.status.name() == 'DELIVERED')}"
+            th:action="@{/admin/orders/{id}/assign-delivery(id=${order.id})}"
+            method="post"
+            class="status-form"
+            style="margin-top:10px;">
+
+        <select name="agentId" required>
+          <option value="">Select Delivery Boy</option>
+          <option th:each="a : ${agents}"
+                  th:value="${a.id}"
+                  th:text="${a.name + ' - ' + a.phone}"
+                  th:selected="${assignment != null and assignment.agent.id == a.id}">
+          </option>
+        </select>
+
+        <button class="btn btn-solid" type="submit">Assign & Start</button>
+      </form>
+
+      <div class="muted" style="margin-top:8px;">
+        Note: Assigning will set order status to <b>OUT_FOR_DELIVERY</b>.
+      </div>
+    </div>
+  </div>
+
+  <hr class="hr">
+
+  <h3>Items</h3>
+  <div class="order-items">
+    <div class="order-item" th:each="i : ${items}">
+      <div>
+        <b th:text="${i.foodName}">Food</b>
+        <div class="muted" th:text="${i.category + ' • ' + (i.veg ? 'Veg' : 'Non-Veg')}">Meta</div>
+        <div class="muted" th:text="'Qty: ' + ${i.quantity}">Qty</div>
+      </div>
+      <div>₹<b th:text="${i.lineTotal}">0</b></div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html> -->
+
+
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="'Admin - Order #' + ${order.id}">Admin Order</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="admin-bg">
+
+<div class="section">
+
+  <!-- Header -->
+  <div class="adminFormHero">
+    <div>
+      <div class="adminFormCrumb">
+        <a th:href="@{/admin/dashboard}">Admin</a>
+        <span> / </span>
+        <a th:href="@{/admin/orders}">Orders</a>
+        <span> / </span>
+        <span th:text="'Order #' + ${order.id}">Order</span>
+      </div>
+
+      <div class="adminFormTitleRow">
+        <div class="adminFormIcon">🧾</div>
+        <div>
+          <h2 class="adminFormTitle" th:text="'Order #' + ${order.id} + ' (Admin)'">Order</h2>
+          <div class="muted">
+            Restaurant: <b th:text="${order.restaurant.name}">Restaurant</b>
+            <span th:if="${order.city != null and !#strings.isEmpty(order.city)}"
+                  th:text="' • ' + ${order.city}"> • City</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="adminFormHero-actions">
+      <a class="btn btn-outline" th:href="@{/admin/orders}">Back</a>
+      <a class="btn btn-outline" th:href="@{/admin/dashboard}">Dashboard</a>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <p class="msg" th:if="${param.ok}" th:text="${param.ok[0]}"></p>
+  <p class="error" th:if="${param.msg}" th:text="${param.msg[0]}"></p>
+
+  <!-- Top cards -->
+  <div class="adminOrderGrid">
+
+    <!-- Order Summary -->
+    <div class="adminCardSolid">
+      <div class="cardTitle">Order Summary</div>
+
+      <div class="kv">
+        <div class="kvRow"><span class="muted">User</span><b th:text="${order.user.fullName}">User</b></div>
+        <div class="kvRow"><span class="muted">Email</span><b th:text="${order.user.email}">email</b></div>
+        <div class="kvRow"><span class="muted">Total</span><b>₹<span th:text="${order.totalAmount}">0</span></b></div>
+
+        <div class="kvRow">
+          <span class="muted">Payment</span>
+          <span class="pill" th:text="${order.paymentStatus}"
+                th:classappend="' pay-' + ${#strings.toLowerCase(order.paymentStatus.name())}">
+            PENDING
+          </span>
+        </div>
+
+        <div class="kvRow" th:if="${order.paymentMethod != null}">
+          <span class="muted">Method</span>
+          <b th:text="${order.paymentMethod}">UPI</b>
+        </div>
+
+        <div class="kvRow" th:if="${order.paymentRef != null}">
+          <span class="muted">Payment Ref</span>
+          <b th:text="${order.paymentRef}">PAY-XXX</b>
+        </div>
+
+        <div class="kvRow">
+          <span class="muted">Status</span>
+          <span class="pill" th:text="${order.status}"
+                th:classappend="' status-' + ${#strings.toLowerCase(order.status.name())}">
+            CREATED
+          </span>
+        </div>
+
+        <div class="kvRow">
+          <span class="muted">Placed</span>
+          <b th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy, hh:mm a')}">date</b>
+        </div>
+
+        <div class="kvRow">
+          <span class="muted">Address</span>
+          <b th:text="${order.deliveryAddress}">Address</b>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="adminCardSolid">
+      <div class="cardTitle">Actions</div>
+
+      <!-- Status update -->
+      <div class="subTitle">Update Status</div>
+
+      <div th:if="${order.status.name() == 'CANCELLED' or order.status.name() == 'DELIVERED'}"
+           class="muted" style="margin-top:10px;">
+        This order is <b th:text="${order.status}">CANCELLED</b>. Status cannot be changed.
+      </div>
+
+      <form th:if="${!(order.status.name() == 'CANCELLED' or order.status.name() == 'DELIVERED')}"
+            th:action="@{/admin/orders/{id}/status(id=${order.id})}"
+            method="post"
+            class="adminActionRow">
+
+        <select name="status" class="adminSelect">
+          <option th:each="s : ${statuses}"
+                  th:value="${s}"
+                  th:text="${s}"
+                  th:selected="${s == order.status}">
+          </option>
+        </select>
+
+        <button class="btn btn-solid" type="submit">Save</button>
+      </form>
+
+      <div class="adminDivider"></div>
+
+      <!-- Delivery assignment -->
+      <div class="subTitle">Delivery Boy</div>
+
+      <div th:if="${assignment != null}" class="muted" style="margin-top:8px;">
+        Assigned to:
+        <b th:text="${assignment.agent.name}">Agent</b>
+        (<span th:text="${assignment.agent.phone}">phone</span>)
+        <span th:if="${assignment.agent.vehicleNo != null}">
+          • Vehicle: <b th:text="${assignment.agent.vehicleNo}">VEH</b>
+        </span>
+      </div>
+
+      <div th:if="${order.status.name() == 'CANCELLED' or order.status.name() == 'DELIVERED'}"
+           class="muted" style="margin-top:10px;">
+        Delivery assignment disabled for CANCELLED/DELIVERED orders.
+      </div>
+
+      <form th:if="${!(order.status.name() == 'CANCELLED' or order.status.name() == 'DELIVERED')}"
+            th:action="@{/admin/orders/{id}/assign-delivery(id=${order.id})}"
+            method="post"
+            class="adminActionRow"
+            style="margin-top:10px;">
+
+        <select name="agentId" class="adminSelect" required>
+          <option value="">Select Delivery Boy</option>
+          <option th:each="a : ${agents}"
+                  th:value="${a.id}"
+                  th:text="${a.name + ' - ' + a.phone}"
+                  th:selected="${assignment != null and assignment.agent.id == a.id}">
+          </option>
+        </select>
+
+        <button class="btn btn-solid" type="submit">Assign & Start</button>
+      </form>
+
+      <div class="muted" style="margin-top:8px;">
+        Note: Assigning sets status to <b>OUT_FOR_DELIVERY</b>.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Items -->
+  <div class="adminTableCard" style="margin-top:14px;">
+    <div class="adminTableHead">
+      <div class="muted">Items</div>
+      <div class="muted" th:text="'Count: ' + ${#lists.size(items)}">Count: 0</div>
+    </div>
+
+    <div class="adminItemsTable">
+      <div class="trow thead" style="grid-template-columns: 2fr 130px 120px 140px 140px;">
+        <div>Food</div>
+        <div>Type</div>
+        <div>Qty</div>
+        <div>Unit</div>
+        <div>Total</div>
+      </div>
+
+      <div class="trow" th:each="i : ${items}"
+           style="grid-template-columns: 2fr 130px 120px 140px 140px;">
+        <div>
+          <b th:text="${i.foodName}">Food</b>
+          <div class="muted" th:text="${i.category}">Category</div>
+        </div>
+        <div>
+          <span class="pill" th:text="${i.veg ? 'VEG' : 'NON-VEG'}"
+                th:classappend="${i.veg ? ' pay-paid' : ' pay-failed'}">VEG</span>
+        </div>
+        <div th:text="${i.quantity}">1</div>
+        <div>₹<span th:text="${i.unitPrice}">0</span></div>
+        <div>₹<b th:text="${i.lineTotal}">0</b></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

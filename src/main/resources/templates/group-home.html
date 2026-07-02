@@ -1,0 +1,101 @@
+<!-- <!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Group Order</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="navbar">
+  <div class="logo">
+    <img th:src="@{/images/logo.png}" alt="Logo">
+    <span>FoodFrenzy</span>
+  </div>
+  <div class="nav-actions">
+    <a class="btn btn-outline" th:href="@{/}">Home</a>
+    <a class="btn btn-outline" th:href="@{/orders}">My Orders</a>
+  </div>
+</header>
+
+<div class="section">
+  <h2>Smart Group Ordering</h2>
+  <p class="muted" style="margin-top:6px;">Create a group and share code with friends.</p>
+
+  <div class="two-col">
+    <div class="panel">
+      <h3>Create Group Order</h3>
+
+      <form th:action="@{/group/create}" method="post" class="status-form">
+        <select name="restaurantId" required>
+          <option value="">Select Restaurant</option>
+          <option th:each="r : ${restaurants}" th:value="${r.id}" th:text="${r.name}"></option>
+        </select>
+        <button class="btn btn-solid" type="submit">Create</button>
+      </form>
+    </div>
+
+    <div class="panel">
+      <h3>Join Group Order</h3>
+
+      <form th:action="@{/group/join}" method="post" class="status-form">
+        <input name="code" placeholder="Enter join code (e.g. A7K2QZ)" required
+               style="padding:10px; border:1px solid #ddd; border-radius:10px;">
+        <button class="btn btn-solid" type="submit">Join</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+</body>
+</html> -->
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Group Order</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+  <!-- Common Navbar -->
+  <div th:replace="~{fragments/navbar :: appNavbar}"></div>
+
+  <div class="section">
+    <h2>Smart Group Ordering</h2>
+    <p class="muted" style="margin-top:6px;">Create a group and share code with friends.</p>
+
+    <div class="two-col">
+      <div class="panel">
+        <h3>Create Group Order</h3>
+
+        <form th:action="@{/group/create}" method="post" class="status-form">
+          <select name="restaurantId" required>
+            <option value="">Select Restaurant</option>
+            <option th:each="r : ${restaurants}" th:value="${r.id}" th:text="${r.name}"></option>
+          </select>
+          <button class="btn btn-solid" type="submit">Create</button>
+        </form>
+      </div>
+
+      <div class="panel">
+        <h3>Join Group Order</h3>
+
+        <form th:action="@{/group/join}" method="post" class="status-form">
+          <input name="code" placeholder="Enter join code (e.g. A7K2QZ)" required
+                 style="padding:10px; border:1px solid #ddd; border-radius:10px;">
+          <button class="btn btn-solid" type="submit">Join</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

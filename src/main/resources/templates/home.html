@@ -1,0 +1,518 @@
+<!-- 
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FoodFrenzy - Online Food Ordering</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+  Common Navbar
+  <div th:replace="~{fragments/navbar :: appNavbar}"></div>
+
+  Hero
+  <section class="hero">
+    <div class="hero-box">
+      <h1>Order food from nearby restaurants</h1>
+      <p>Search your favourite food or hotel (restaurant)</p>
+
+      <form class="search-bar" th:action="@{/search}" method="get">
+        <input type="text" name="q" placeholder="Search food or restaurant..." />
+        <button type="submit">Search</button>
+      </form>
+    </div>
+  </section>
+
+  Food Categories
+  <section class="section">
+    <h2>Food Types</h2>
+    <div class="categories">
+      <a class="chip" th:href="@{/category(name='Biryani')}">Biryani</a>
+      <a class="chip" th:href="@{/category(name='Pizza')}">Pizza</a>
+      <a class="chip" th:href="@{/category(name='Burger')}">Burger</a>
+      <a class="chip" th:href="@{/category(name='Chinese')}">Chinese</a>
+      <a class="chip" th:href="@{/category(name='Desserts')}">Desserts</a>
+      <a class="chip" th:href="@{/category(name='Veg')}">Veg</a>
+      <a class="chip" th:href="@{/category(name='Non-Veg')}">Non-Veg</a>
+    </div>
+    
+    <div class="cat-grid">
+  <a class="cat-card" th:href="@{/category(name='Biryani')}">
+    <img th:src="@{/images/categories/biryani.png}" alt="Biryani">
+    <span>Biryani</span>
+  </a>
+
+  <a class="cat-card" th:href="@{/category(name='Pizza')}">
+    <img th:src="@{/images/categories/pizza.png}" alt="Pizza">
+    <span>Pizza</span>
+  </a>
+
+  <a class="cat-card" th:href="@{/category(name='Burger')}">
+    <img th:src="@{/images/categories/burger.png}" alt="Burger">
+    <span>Burger</span>
+  </a>
+
+  <a class="cat-card" th:href="@{/category(name='Chinese')}">
+    <img th:src="@{/images/categories/chinese.png}" alt="Chinese">
+    <span>Chinese</span>
+  </a>
+
+  <a class="cat-card" th:href="@{/category(name='Desserts')}">
+    <img th:src="@{/images/categories/desserts.png}" alt="Desserts">
+    <span>Desserts</span>
+  </a>
+
+  <a class="cat-card" th:href="@{/category(name='Veg')}">
+    <img th:src="@{/images/categories/veg.png}" alt="Veg">
+    <span>Veg</span>
+  </a>
+
+  <a class="cat-card" th:href="@{/category(name='Non-Veg')}">
+    <img th:src="@{/images/categories/nonveg.png}" alt="Non-Veg">
+    <span>Non-Veg</span>
+  </a>
+</div>
+
+
+
+
+
+<div class="cat-grid">
+  <a class="cat-card" th:href="@{/category(name='Biryani')}">
+    <img class="cat-img" th:src="@{/images/categories/biryani.png}" alt="Biryani">
+    <span>Biryani</span>
+  </a>
+
+  <a class="cat-card" th:href="@{/category(name='Pizza')}">
+    <img class="cat-img" th:src="@{/images/categories/pizza.png}" alt="Pizza">
+    <span>Pizza</span>
+  </a>
+
+  <a class="cat-card" th:href="@{/category(name='Burger')}">
+    <img class="cat-img" th:src="@{/images/categories/burger.png}" alt="Burger">
+    <span>Burger</span>
+  </a>
+
+  <a class="cat-card" th:href="@{/category(name='Chinese')}">
+    <img class="cat-img" th:src="@{/images/categories/chinese.png}" alt="Chinese">
+    <span>Chinese</span>
+  </a>
+
+  <a class="cat-card" th:href="@{/category(name='Desserts')}">
+    <img class="cat-img" th:src="@{/images/categories/desserts.png}" alt="Desserts">
+    <span>Desserts</span>
+  </a>
+
+  <a class="cat-card" th:href="@{/category(name='Veg')}">
+    <img class="cat-img" th:src="@{/images/categories/veg.png}" alt="Veg">
+    <span>Veg</span>
+  </a>
+
+  <a class="cat-card" th:href="@{/category(name='Non-Veg')}">
+    <img class="cat-img" th:src="@{/images/categories/nonveg.png}" alt="Non-Veg">
+    <span>Non-Veg</span>
+  </a>
+</div>
+
+
+  </section>
+
+  Recommended
+  <section class="section" th:if="${recommendedItems != null}">
+    <h2>Recommended For You</h2>
+
+    <p class="muted" th:if="${recommendReason != null}"
+       th:text="${recommendReason}" style="margin-top:-6px;"></p>
+
+    <div class="muted" th:if="${#lists.isEmpty(recommendedItems)}" style="margin-top:8px;">
+      No recommendations yet.
+    </div>
+
+    <div class="grid" th:if="${!#lists.isEmpty(recommendedItems)}">
+      <a class="card-link" th:each="f : ${recommendedItems}"
+         th:href="@{/restaurants/{id}(id=${f.restaurant.id})}">
+        <div class="card">
+          <img class="card-img"
+               th:src="${(f.imageUrl != null and !#strings.isEmpty(f.imageUrl)) ? f.imageUrl : '/images/default-food.jpg'}"
+               alt="Food">
+          <div class="card-body">
+            <h3 th:text="${f.name}">Food</h3>
+            <p class="muted" th:text="${f.category}">Category</p>
+            <p style="margin-top:6px;">₹<b th:text="${f.price}">0</b></p>
+          </div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  Restaurants
+  <section class="section">
+    <h2>Popular Restaurants</h2>
+
+    <div class="muted" th:if="${#lists.isEmpty(restaurants)}" style="margin-top:8px;">
+      No restaurants added yet. (Admin can add from Admin Panel → Manage Restaurants)
+    </div>
+
+    <div class="grid" th:if="${!#lists.isEmpty(restaurants)}">
+      <a class="card-link" th:each="r : ${restaurants}"
+         th:href="@{/restaurants/{id}(id=${r.id})}">
+        <div class="card">
+          <img class="card-img"
+               th:src="${(r.imageUrl != null and !#strings.isEmpty(r.imageUrl)) ? r.imageUrl : '/images/default-restaurant.jpg'}"
+               alt="Restaurant">
+          <div class="card-body">
+            <h3 th:text="${r.name}">Restaurant Name</h3>
+            <p class="muted"
+               th:text="${r.city + (r.area != null and !#strings.isEmpty(r.area) ? (' - ' + r.area) : '')}">
+              City - Area
+            </p>
+          </div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  Footer
+  <footer class="footer">
+    <div class="footer-grid">
+      <div>
+        <h3>About Us</h3>
+        <p>
+          FoodFrenzy is an online food ordering system where users can discover restaurants,
+          add items to cart, place orders, and track deliveries.
+        </p>
+      </div>
+      <div>
+        <h3>Contact Us</h3>
+        <p>Email: support@foodfrenzy.com</p>
+        <p>Phone: +91-9000000000</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <small>© 2026 FoodFrenzy. All rights reserved.</small>
+    </div>
+  </footer>
+
+</body>
+</html> -->
+
+
+
+
+
+
+
+
+
+
+<!-- 
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FoodFrenzy - Online Food Ordering</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+  Common Navbar
+  <div th:replace="~{fragments/navbar :: appNavbar}"></div>
+
+  Hero
+  <section class="hero">
+    <div class="hero-box">
+      <h1>Order food from nearby restaurants</h1>
+      <p>Search your favourite food or hotel (restaurant)</p>
+
+      <form class="search-bar" th:action="@{/search}" method="get">
+        <input type="text" name="q" placeholder="Search food or restaurant..." />
+        <button type="submit">Search</button>
+      </form>
+    </div>
+  </section>
+
+  Food Types
+  <section class="section">
+    <h2>Food Types</h2>
+
+    <div class="cat-grid">
+      <a class="cat-card" th:href="@{/category(name='Biryani')}">
+        <img class="cat-img" th:src="@{/images/categories/biryani.jpg}" alt="Biryani">
+        <span>Biryani</span>
+      </a>
+
+      <a class="cat-card" th:href="@{/category(name='Pizza')}">
+        <img class="cat-img" th:src="@{/images/categories/pizza.jpg}" alt="Pizza">
+        <span>Pizza</span>
+      </a>
+
+      <a class="cat-card" th:href="@{/category(name='Burger')}">
+        <img class="cat-img" th:src="@{/images/categories/burger.jpg}" alt="Burger">
+        <span>Burger</span>
+      </a>
+
+      <a class="cat-card" th:href="@{/category(name='Chinese')}">
+        <img class="cat-img" th:src="@{/images/categories/chinese.jpg}" alt="Chinese">
+        <span>Chinese</span>
+      </a>
+
+      <a class="cat-card" th:href="@{/category(name='Desserts')}">
+        <img class="cat-img" th:src="@{/images/categories/desserts.jpg}" alt="Desserts">
+        <span>Desserts</span>
+      </a>
+
+      <a class="cat-card" th:href="@{/category(name='Veg')}">
+        <img class="cat-img" th:src="@{/images/categories/veg.jpg}" alt="Veg">
+        <span>Veg</span>
+      </a>
+
+      <a class="cat-card" th:href="@{/category(name='Non-Veg')}">
+        <img class="cat-img" th:src="@{/images/categories/nonveg.jpg}" alt="Non-Veg">
+        <span>Non-Veg</span>
+      </a>
+    </div>
+  </section>
+
+  Recommended
+  <section class="section" th:if="${recommendedItems != null}">
+    <h2>Recommended For You</h2>
+
+    <p class="muted" th:if="${recommendReason != null}"
+       th:text="${recommendReason}" style="margin-top:-6px;"></p>
+
+    <div class="muted" th:if="${#lists.isEmpty(recommendedItems)}" style="margin-top:8px;">
+      No recommendations yet.
+    </div>
+
+    <div class="grid" th:if="${!#lists.isEmpty(recommendedItems)}">
+      <a class="card-link" th:each="f : ${recommendedItems}"
+         th:href="@{/restaurants/{id}(id=${f.restaurant.id})}">
+        <div class="card">
+          <img class="card-img"
+               th:src="${(f.imageUrl != null and !#strings.isEmpty(f.imageUrl)) ? f.imageUrl : '/images/default-food.jpg'}"
+               alt="Food">
+          <div class="card-body">
+            <h3 th:text="${f.name}">Food</h3>
+            <p class="muted" th:text="${f.category}">Category</p>
+            <p style="margin-top:6px;">₹<b th:text="${f.price}">0</b></p>
+          </div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  Restaurants
+  <section class="section">
+    <h2>Popular Restaurants</h2>
+
+    <div class="muted" th:if="${#lists.isEmpty(restaurants)}" style="margin-top:8px;">
+      No restaurants added yet. (Admin can add from Admin Panel → Manage Restaurants)
+    </div>
+
+    <div class="grid" th:if="${!#lists.isEmpty(restaurants)}">
+      <a class="card-link" th:each="r : ${restaurants}"
+         th:href="@{/restaurants/{id}(id=${r.id})}">
+        <div class="card">
+          <img class="card-img"
+               th:src="${(r.imageUrl != null and !#strings.isEmpty(r.imageUrl)) ? r.imageUrl : '/images/default-restaurant.jpg'}"
+               alt="Restaurant">
+          <div class="card-body">
+            <h3 th:text="${r.name}">Restaurant Name</h3>
+            <p class="muted"
+               th:text="${r.city + (r.area != null and !#strings.isEmpty(r.area) ? (' - ' + r.area) : '')}">
+              City - Area
+            </p>
+          </div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  Footer
+  <footer class="footer">
+    <div class="footer-grid">
+      <div>
+        <h3>About Us</h3>
+        <p>
+          FoodFrenzy is an online food ordering system where users can discover restaurants,
+          add items to cart, place orders, and track deliveries.
+        </p>
+      </div>
+      <div>
+        <h3>Contact Us</h3>
+        <p>Email: support@foodfrenzy.com</p>
+        <p>Phone: +91-9000000000</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <small>© 2026 FoodFrenzy. All rights reserved.</small>
+    </div>
+  </footer>
+
+</body>
+</html> -->
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FoodFrenzy - Online Food Ordering</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="home-bg">
+
+  
+  <div th:replace="~{fragments/navbar :: appNavbar}"></div>
+
+ 
+  <section class="hero">
+    <div class="hero-box">
+      <h1>Order food from nearby restaurants</h1>
+      <p>Search your favourite food or hotel (restaurant)</p>
+
+      <form class="search-bar" th:action="@{/search}" method="get">
+        <input type="text" name="q" placeholder="Search food or restaurant..." />
+        <button type="submit">Search</button>
+      </form>
+    </div>
+  </section>
+
+
+  <section class="section">
+    <h2>Food Types</h2>
+
+    <div class="cat-grid">
+      <a class="cat-card" th:href="@{/category(name='Biryani')}">
+        <img class="cat-img" th:src="@{/images/categories/biryani.png}" alt="Biryani">
+        <span>Biryani</span>
+      </a>
+
+      <a class="cat-card" th:href="@{/category(name='Pizza')}">
+        <img class="cat-img" th:src="@{/images/categories/pizza.png}" alt="Pizza">
+        <span>Pizza</span>
+      </a>
+
+      <a class="cat-card" th:href="@{/category(name='Burger')}">
+        <img class="cat-img" th:src="@{/images/categories/burger.png}" alt="Burger">
+        <span>Burger</span>
+      </a>
+
+      <a class="cat-card" th:href="@{/category(name='Chinese')}">
+        <img class="cat-img" th:src="@{/images/categories/chinese.png}" alt="Chinese">
+        <span>Chinese</span>
+      </a>
+
+      <a class="cat-card" th:href="@{/category(name='Desserts')}">
+        <img class="cat-img" th:src="@{/images/categories/desserts.png}" alt="Desserts">
+        <span>Desserts</span>
+      </a>
+
+      <a class="cat-card" th:href="@{/category(name='Veg')}">
+        <img class="cat-img" th:src="@{/images/categories/veg.png}" alt="Veg">
+        <span>Veg</span>
+      </a>
+
+      <a class="cat-card" th:href="@{/category(name='Non-Veg')}">
+        <img class="cat-img" th:src="@{/images/categories/nonveg.png}" alt="Non-Veg">
+        <span>Non-Veg</span>
+      </a>
+    </div>
+  </section>
+
+ 
+  <section class="section" th:if="${recommendedItems != null}">
+    <h2>Recommended For You</h2>
+
+    <p class="muted" th:if="${recommendReason != null}"
+       th:text="${recommendReason}" style="margin-top:-6px;"></p>
+
+    <div class="muted" th:if="${#lists.isEmpty(recommendedItems)}" style="margin-top:8px;">
+    
+    </div>
+
+    <div class="grid" th:if="${!#lists.isEmpty(recommendedItems)}">
+      <a class="card-link" th:each="f : ${recommendedItems}"
+         th:href="@{/restaurants/{id}(id=${f.restaurant.id})}">
+        <div class="card">
+          <img class="card-img"
+               th:src="${(f.imageUrl != null and !#strings.isEmpty(f.imageUrl)) ? f.imageUrl : '/images/default-food.jpg'}"
+               alt="Food">
+          <div class="card-body">
+            <h3 th:text="${f.name}">Food</h3>
+            <p class="muted" th:text="${f.category}">Category</p>
+            <p style="margin-top:6px;">₹<b th:text="${f.price}">0</b></p>
+          </div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  
+  <section class="section">
+    <h2>Popular Restaurants</h2>
+
+    <div class="muted" th:if="${#lists.isEmpty(restaurants)}" style="margin-top:8px;">
+      No restaurants added yet. (Admin can add from Admin Panel → Manage Restaurants)
+    </div>
+
+    <div class="grid" th:if="${!#lists.isEmpty(restaurants)}">
+      <a class="card-link" th:each="r : ${restaurants}"
+         th:href="@{/restaurants/{id}(id=${r.id})}">
+        <div class="card">
+          <img class="card-img"
+               th:src="${(r.imageUrl != null and !#strings.isEmpty(r.imageUrl)) ? r.imageUrl : '/images/default-restaurant.jpg'}"
+               alt="Restaurant">
+          <div class="card-body">
+            <h3 th:text="${r.name}">Restaurant Name</h3>
+            <p class="muted"
+               th:text="${r.city + (r.area != null and !#strings.isEmpty(r.area) ? (' - ' + r.area) : '')}">
+              City - Area
+            </p>
+          </div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+ 
+  <footer class="footer">
+    <div class="footer-grid">
+      <div>
+        <h3>About Us</h3>
+        <p>
+          FoodFrenzy is an online food ordering system where users can discover restaurants,
+          add items to cart, place orders, and track deliveries.
+        </p>
+      </div>
+      <div>
+        <h3>Contact Us</h3>
+        <p>Email: support@foodfrenzy.com</p>
+        <p>Phone: +91-9000000000</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <small>© 2026 FoodFrenzy. All rights reserved.</small>
+    </div>
+  </footer>
+
+</body>
+</html> 
+
+
+
+
+
+
+

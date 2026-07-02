@@ -1,0 +1,459 @@
+<!-- <!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="'Payment - Order #' + ${order.id}">Payment</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="navbar">
+  <div class="logo">
+    <img th:src="@{/images/logo.png}" alt="Logo">
+    <span>FoodFrenzy</span>
+  </div>
+  <div class="nav-actions">
+    <a class="btn btn-outline" th:href="@{/orders/{id}(id=${order.id})}">Back to Order</a>
+  </div>
+</header>
+
+<div class="section">
+  <h2 th:text="'Payment - Order #' + ${order.id}">Payment</h2>
+  <p class="error" th:if="${param.msg}" th:text="${param.msg[0]}"></p>
+
+  <div class="payment-wrap">
+    <div class="payment-left">
+      <h3>Choose Payment Method</h3>
+
+      <div class="muted" style="margin-top:8px;">
+        Current Payment Status: <b th:text="${order.paymentStatus}">PENDING</b>
+      </div>
+
+      <div class="pay-box">
+        <form th:action="@{/payment/{id}/success(id=${order.id})}" method="post" class="pay-form">
+          <label class="muted">Method</label>
+          <select name="method" required>
+            <option value="">Select</option>
+            <option th:each="m : ${methods}" th:value="${m}" th:text="${m}"
+                    th:if="${m.name() != 'COD'}"></option>
+          </select>
+          <button class="btn btn-solid" type="submit">Pay Success (Mock)</button>
+        </form>
+
+        <form th:action="@{/payment/{id}/failed(id=${order.id})}" method="post" class="pay-form">
+          <input type="hidden" name="method" value="UPI"/>
+          <button class="btn btn-outline" type="submit">Pay Failed (Mock)</button>
+        </form>
+
+        <form th:action="@{/payment/{id}/cod(id=${order.id})}" method="post" class="pay-form">
+          <button class="btn btn-outline" type="submit">Cash on Delivery</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="payment-right">
+      <h3>Amount</h3>
+      <p class="muted">Restaurant: <b th:text="${order.restaurant.name}">R</b></p>
+
+      <div class="summary-list">
+        <div class="summary-row" th:each="i : ${items}">
+          <div>
+            <b th:text="${i.foodName}">Item</b>
+            <div class="muted" th:text="'Qty: ' + ${i.quantity}">Qty</div>
+          </div>
+          <div>₹<b th:text="${i.lineTotal}">0</b></div>
+        </div>
+      </div>
+
+      <div class="sum-row" style="margin-top:12px;">
+        <span>Total</span>
+        <span>₹<b th:text="${order.totalAmount}">0</b></span>
+      </div>
+
+      <div class="muted" style="margin-top:10px;" th:if="${order.paymentRef != null}">
+        Payment Ref: <b th:text="${order.paymentRef}">PAY-XXXX</b>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html> -->
+
+<!-- 
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="'Payment - Order #' + ${order.id}">Payment</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+  Common Navbar
+  <div th:replace="~{fragments/navbar :: appNavbar}"></div>
+
+  <div class="section">
+    <div class="actions" style="margin-bottom:12px;">
+      <a class="btn btn-outline" th:href="@{/orders/{id}(id=${order.id})}">Back to Order</a>
+    </div>
+
+    <h2 th:text="'Payment - Order #' + ${order.id}">Payment</h2>
+
+    <p class="error" th:if="${param.msg}" th:text="${param.msg[0]}"></p>
+
+    <div class="payment-wrap">
+      <div class="payment-left">
+        <h3>Choose Payment Method</h3>
+
+        <div class="muted" style="margin-top:8px;">
+          Current Payment Status: <b th:text="${order.paymentStatus}">PENDING</b>
+        </div>
+
+        <div class="pay-box">
+          <form th:action="@{/payment/{id}/success(id=${order.id})}" method="post" class="pay-form">
+            <label class="muted">Method</label>
+            <select name="method" required>
+              <option value="">Select</option>
+              <option th:each="m : ${methods}" th:value="${m}" th:text="${m}"
+                      th:if="${m.name() != 'COD'}"></option>
+            </select>
+            <button class="btn btn-solid" type="submit">Pay Success (Mock)</button>
+          </form>
+
+          <form th:action="@{/payment/{id}/failed(id=${order.id})}" method="post" class="pay-form">
+            <input type="hidden" name="method" value="UPI"/>
+            <button class="btn btn-outline" type="submit">Pay Failed (Mock)</button>
+          </form>
+
+          <form th:action="@{/payment/{id}/cod(id=${order.id})}" method="post" class="pay-form">
+            <button class="btn btn-outline" type="submit">Cash on Delivery</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="payment-right">
+        <h3>Amount</h3>
+        <p class="muted">Restaurant: <b th:text="${order.restaurant.name}">R</b></p>
+
+        <div class="summary-list">
+          <div class="summary-row" th:each="i : ${items}">
+            <div>
+              <b th:text="${i.foodName}">Item</b>
+              <div class="muted" th:text="'Qty: ' + ${i.quantity}">Qty</div>
+            </div>
+            <div>₹<b th:text="${i.lineTotal}">0</b></div>
+          </div>
+        </div>
+
+        <div class="sum-row" style="margin-top:12px;">
+          <span>Total</span>
+          <span>₹<b th:text="${order.totalAmount}">0</b></span>
+        </div>
+
+        <div class="muted" style="margin-top:10px;" th:if="${order.paymentRef != null}">
+          Payment Ref: <b th:text="${order.paymentRef}">PAY-XXXX</b>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html> -->
+
+
+
+
+
+
+
+
+
+
+<!-- 
+
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="'Payment - Order #' + ${order.id}">Payment</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+  Common Navbar
+  <div th:replace="~{fragments/navbar :: appNavbar}"></div>
+
+  <div class="section">
+    <div class="actions" style="margin-bottom:12px;">
+      <a class="btn btn-outline" th:href="@{/orders/{id}(id=${order.id})}">Back to Order</a>
+    </div>
+
+    <h2 th:text="'Payment - Order #' + ${order.id}">Payment</h2>
+    <p class="error" th:if="${param.msg}" th:text="${param.msg[0]}"></p>
+
+    <div class="payment-wrap">
+      <div class="payment-left">
+        <h3>Choose Payment Method</h3>
+
+        <div class="muted" style="margin-top:8px;">
+          Current Payment Status: <b th:text="${order.paymentStatus}">PENDING</b>
+        </div>
+
+        <div class="pay-box">
+          <form th:action="@{/payment/{id}/success(id=${order.id})}" method="post" class="pay-form">
+            <label class="muted">Method</label>
+            <select name="method" required>
+              <option value="">Select</option>
+              <option th:each="m : ${methods}" th:value="${m}" th:text="${m}"
+                      th:if="${m.name() != 'COD'}"></option>
+            </select>
+            <button class="btn btn-solid" type="submit">Pay Success</button>
+          </form>
+
+          <form th:action="@{/payment/{id}/failed(id=${order.id})}" method="post" class="pay-form">
+            <label class="muted">Method</label>
+            <select name="method" required>
+              <option value="UPI">UPI</option>
+              <option value="CARD">CARD</option>
+              <option value="WALLET">WALLET</option>
+            </select>
+            <button class="btn btn-outline" type="submit">Pay Failed</button>
+          </form>
+
+          <form th:action="@{/payment/{id}/cod(id=${order.id})}" method="post" class="pay-form">
+            <button class="btn btn-outline" type="submit">Cash on Delivery</button>
+          </form>
+        </div>
+
+        <hr class="hr">
+
+        <h3>Payment History</h3>
+        <div class="muted" th:if="${#lists.isEmpty(txns)}" style="margin-top:8px;">
+          No payment attempts yet.
+        </div>
+
+        <div class="table" th:if="${!#lists.isEmpty(txns)}" style="margin-top:10px;">
+          <div class="trow thead" style="grid-template-columns: 1fr 120px 140px;">
+            <div>Info</div>
+            <div>Status</div>
+            <div>Amount</div>
+          </div>
+
+          <div class="trow" th:each="t : ${txns}" style="grid-template-columns: 1fr 120px 140px;">
+            <div>
+              <b th:text="${t.method}">UPI</b>
+              <div class="muted" th:text="${#temporals.format(t.createdAt, 'dd-MM-yyyy HH:mm')}">time</div>
+              <div class="muted" th:if="${t.ref != null}" th:text="'Ref: ' + ${t.ref}">ref</div>
+              <div class="muted" th:if="${t.message != null}" th:text="${t.message}">msg</div>
+            </div>
+            <div><span class="badge" th:text="${t.status}">PAID</span></div>
+            <div>₹<b th:text="${t.amount}">0</b></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="payment-right">
+        <h3>Amount</h3>
+        <p class="muted">Restaurant: <b th:text="${order.restaurant.name}">R</b></p>
+
+        <div class="summary-list">
+          <div class="summary-row" th:each="i : ${items}">
+            <div>
+              <b th:text="${i.foodName}">Item</b>
+              <div class="muted" th:text="'Qty: ' + ${i.quantity}">Qty</div>
+            </div>
+            <div>₹<b th:text="${i.lineTotal}">0</b></div>
+          </div>
+        </div>
+
+        <div class="sum-row" style="margin-top:12px;">
+          <span>Total</span>
+          <span>₹<b th:text="${order.totalAmount}">0</b></span>
+        </div>
+
+        <div class="muted" style="margin-top:10px;" th:if="${order.paymentRef != null}">
+          Latest Payment Ref: <b th:text="${order.paymentRef}">PAY-XXXX</b>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html> -->
+
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="'Payment - Order #' + ${order.id}">Payment</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="payment-bg">
+
+  <!-- Navbar -->
+  <div th:replace="~{fragments/navbar :: appNavbar}"></div>
+
+  <div class="section paymentPage">
+
+    <!-- Head -->
+    <div class="payHead">
+      <div>
+        <h2 style="margin-bottom:6px;" th:text="'Payment - Order #' + ${order.id}">Payment</h2>
+        <div class="muted">
+          Restaurant: <b th:text="${order.restaurant.name}">R</b>
+          <span class="dotSep">•</span>
+          Status:
+          <span class="pill" th:text="${order.paymentStatus}"
+                th:classappend="' pay-' + ${#strings.toLowerCase(order.paymentStatus.name())}">
+            PENDING
+          </span>
+        </div>
+      </div>
+      <a class="btn btn-outline" th:href="@{/orders/{id}(id=${order.id})}">Back to Order</a>
+    </div>
+
+    <p class="error" th:if="${param.msg}" th:text="${param.msg[0]}"></p>
+
+    <div class="payGrid">
+
+      <!-- LEFT -->
+      <div class="payCard">
+        <div class="cardTitleX">
+          <span class="cardIconX">💳</span>
+          <span>Choose Payment Method</span>
+        </div>
+
+        <div class="muted">
+          Current payment status:
+          <b th:text="${order.paymentStatus}">PENDING</b>
+        </div>
+
+        <!-- Success -->
+        <div class="payBoxX">
+          <div class="payBoxTitle">Successful Payment</div>
+          <div class="muted">Select method and click Pay Success.</div>
+
+          <form th:action="@{/payment/{id}/success(id=${order.id})}" method="post" class="payFormX">
+            <select name="method" required>
+              <option value="">Select</option>
+              <option th:each="m : ${methods}" th:value="${m}" th:text="${m}"
+                      th:if="${m.name() != 'COD'}"></option>
+            </select>
+            <button class="btn btn-solid w100" type="submit">Pay Success</button>
+          </form>
+        </div>
+
+        <!-- Failed -->
+        <div class="payBoxX">
+         <!--  <div class="payBoxTitle">Failed Payment (Mock)</div>
+          <div class="muted">Use this to test failure flow.</div> -->
+
+          <!-- <form th:action="@{/payment/{id}/failed(id=${order.id})}" method="post" class="payFormX">
+            <select name="method" required>
+              <option value="UPI">UPI</option>
+              <option value="CARD">CARD</option>
+              <option value="WALLET">WALLET</option>
+            </select>
+            <button class="btn btn-outline w100" type="submit">Pay Failed</button>
+          </form> -->
+        </div>
+
+        <!-- COD -->
+        <div class="payBoxX">
+          <div class="payBoxTitle">Cash on Delivery</div>
+          <div class="muted">Pay at doorstep.</div>
+
+          <form th:action="@{/payment/{id}/cod(id=${order.id})}" method="post">
+            <button class="btn btn-outline w100" type="submit">Cash on Delivery</button>
+          </form>
+        </div>
+
+        <div class="adminFormDivider"></div>
+
+        <!-- History -->
+        <div class="cardTitleX" style="margin-top:4px;">
+          <span class="cardIconX">🧾</span>
+          <span>Payment History</span>
+        </div>
+
+        <div class="muted" th:if="${#lists.isEmpty(txns)}" style="margin-top:8px;">
+          No payment attempts yet.
+        </div>
+
+        <div class="payHistory" th:if="${!#lists.isEmpty(txns)}">
+          <div class="payTxn" th:each="t : ${txns}">
+            <div>
+              <div style="font-weight:1000;">
+                <span th:text="${t.method}">UPI</span>
+                <span class="pill"
+                      th:text="${t.status}"
+                      th:classappend="' pay-' + ${#strings.toLowerCase(t.status.name())}"
+                      style="margin-left:8px;">PAID</span>
+              </div>
+              <div class="muted" th:text="${#temporals.format(t.createdAt, 'dd MMM yyyy, hh:mm a')}">time</div>
+              <div class="muted" th:if="${t.ref != null}" th:text="'Ref: ' + ${t.ref}">ref</div>
+              <div class="muted" th:if="${t.message != null}" th:text="${t.message}">msg</div>
+            </div>
+
+            <div class="txnAmt">
+              ₹<b th:text="${t.amount}">0</b>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT -->
+      <div class="payCard">
+        <div class="cardTitleX">
+          <span class="cardIconX">📦</span>
+          <span>Amount</span>
+        </div>
+
+        <div class="muted">
+          Restaurant: <b th:text="${order.restaurant.name}">R</b>
+        </div>
+
+        <div class="summaryListX" style="margin-top:12px;">
+          <div class="sumItemX" th:each="i : ${items}">
+            <div>
+              <div class="sumName" th:text="${i.foodName}">Item</div>
+              <div class="muted" th:text="'Qty: ' + ${i.quantity}">Qty</div>
+            </div>
+            <div class="sumPrice">₹<b th:text="${i.lineTotal}">0</b></div>
+          </div>
+        </div>
+
+        <div class="sumDividerX"></div>
+
+        <div class="sumTotalX">
+          <span class="muted">Total</span>
+          <span class="totalBig">₹<b th:text="${order.totalAmount}">0</b></span>
+        </div>
+
+        <div class="muted" style="margin-top:10px;" th:if="${order.paymentRef != null}">
+          Latest Payment Ref: <b th:text="${order.paymentRef}">PAY-XXXX</b>
+        </div>
+
+       <!--  <div class="muted" style="margin-top:10px;">
+          Note: This payment is mock/demo for project.
+        </div> -->
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

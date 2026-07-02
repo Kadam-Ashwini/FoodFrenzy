@@ -1,0 +1,258 @@
+<!-- <!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="navbar">
+  <div class="logo">
+    <img th:src="@{/images/logo.png}" alt="Logo">
+    <span>FoodFrenzy</span>
+  </div>
+
+  <div class="nav-actions">
+    <a class="btn btn-outline" th:href="@{/cart}">Back to Cart</a>
+    <div class="auth-buttons user-area" th:if="${session.userName != null}">
+      <span class="hello">Hello, <b th:text="${session.userName}">User</b></span>
+      <a class="btn btn-outline" th:href="@{/logout}">Logout</a>
+    </div>
+  </div>
+</header>
+
+<div class="section">
+  <h2>Checkout</h2>
+
+  <p class="error" th:if="${param.msg}" th:text="${param.msg[0]}"></p>
+
+  <div class="checkout-wrap">
+    <div class="checkout-left">
+      <h3>Delivery Details</h3>
+
+      <form th:action="@{/checkout/place}" method="post" class="checkout-form">
+        <label class="muted">City</label>
+        <select name="city" required>
+          <option value="">Select City</option>
+          <option th:each="c : ${cities}" th:value="${c}" th:text="${c}"></option>
+        </select>
+
+        <label class="muted">Delivery Address</label>
+        <textarea name="deliveryAddress" rows="4" placeholder="House no, street, area, landmark..." required></textarea>
+
+        <button class="btn btn-solid" type="submit">Place Order</button>
+
+        <p class="muted" style="margin-top:10px;">
+          Payment is mock for now (we will add Payment module next).
+        </p>
+      </form>
+    </div>
+
+    <div class="checkout-right">
+      <h3>Order Summary</h3>
+      <p class="muted">Restaurant: <b th:text="${cart.restaurant.name}">Restaurant</b></p>
+
+      <div class="summary-list">
+        <div class="summary-row" th:each="ci : ${items}">
+          <div>
+            <b th:text="${ci.foodItem.name}">Item</b>
+            <div class="muted" th:text="'Qty: ' + ${ci.quantity}">Qty</div>
+          </div>
+          <div>₹<b th:text="${ci.lineTotal}">0</b></div>
+        </div>
+      </div>
+
+      <div class="sum-row" style="margin-top:12px;">
+        <span>Total</span>
+        <span>₹<b th:text="${total}">0</b></span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html> -->
+
+
+<!-- 
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+  Common Navbar
+  <div th:replace="~{fragments/navbar :: appNavbar}"></div>
+
+  <div class="section">
+    <div class="actions" style="margin-bottom:12px;">
+      <a class="btn btn-outline" th:href="@{/cart}">Back to Cart</a>
+    </div>
+
+    <h2>Checkout</h2>
+
+    <p class="error" th:if="${param.msg}" th:text="${param.msg[0]}"></p>
+
+    <div class="checkout-wrap">
+      <div class="checkout-left">
+        <h3>Delivery Details</h3>
+
+        <form th:action="@{/checkout/place}" method="post" class="checkout-form">
+          <label class="muted">City</label>
+          <select name="city" required>
+            <option value="">Select City</option>
+            <option th:each="c : ${cities}" th:value="${c}" th:text="${c}"></option>
+          </select>
+
+          <label class="muted">Delivery Address</label>
+          <textarea name="deliveryAddress" rows="4"
+                    placeholder="House no, street, area, landmark..." required></textarea>
+
+          <button class="btn btn-solid" type="submit">Place Order</button>
+
+          <p class="muted" style="margin-top:10px;">
+            Payment is mock for now (we will add Payment module next).
+          </p>
+        </form>
+      </div>
+
+      <div class="checkout-right">
+        <h3>Order Summary</h3>
+        <p class="muted">Restaurant: <b th:text="${cart.restaurant.name}">Restaurant</b></p>
+
+        <div class="summary-list">
+          <div class="summary-row" th:each="ci : ${items}">
+            <div>
+              <b th:text="${ci.foodItem.name}">Item</b>
+              <div class="muted" th:text="'Qty: ' + ${ci.quantity}">Qty</div>
+            </div>
+            <div>₹<b th:text="${ci.lineTotal}">0</b></div>
+          </div>
+        </div>
+
+        <div class="sum-row" style="margin-top:12px;">
+          <span>Total</span>
+          <span>₹<b th:text="${total}">0</b></span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="checkout-bg">
+
+  <!-- Navbar -->
+  <div th:replace="~{fragments/navbar :: appNavbar}"></div>
+
+  <div class="section checkoutPage">
+
+    <!-- Page Head -->
+    <div class="checkoutHead">
+      <div>
+        <h2 style="margin-bottom:6px;">Checkout</h2>
+        <div class="muted">Confirm delivery details and place your order.</div>
+      </div>
+
+      <div class="checkoutHeadActions">
+        <a class="btn btn-outline" th:href="@{/cart}">Back to Cart</a>
+      </div>
+    </div>
+
+    <p class="error" th:if="${param.msg}" th:text="${param.msg[0]}"></p>
+
+    <div class="checkoutGrid">
+
+      <!-- LEFT: Delivery -->
+      <div class="checkoutCard">
+        <div class="cardTitleX">
+          <span class="cardIconX">📍</span>
+          <span>Delivery Details</span>
+        </div>
+
+        <form th:action="@{/checkout/place}" method="post" class="checkoutFormX">
+          <div class="fieldRow">
+            <div class="fieldX2">
+              <label class="muted">City</label>
+              <select name="city" required>
+                <option value="">Select City</option>
+                <option th:each="c : ${cities}" th:value="${c}" th:text="${c}"></option>
+              </select>
+            </div>
+          </div>
+
+          <div class="fieldRow">
+            <div class="fieldX2">
+              <label class="muted">Delivery Address</label>
+              <textarea name="deliveryAddress" rows="4"
+                        placeholder="House no, street, area, landmark..." required></textarea>
+            </div>
+          </div>
+
+          <button class="btn btn-solid w100" type="submit">Place Order</button>
+
+          <!-- <div class="muted" style="margin-top:10px;">
+            After placing, you can complete payment and track your order.
+          </div> -->
+        </form>
+      </div>
+
+      <!-- RIGHT: Summary -->
+      <div class="checkoutCard">
+        <div class="cardTitleX">
+          <span class="cardIconX">🧾</span>
+          <span>Order Summary</span>
+        </div>
+
+        <div class="muted" th:if="${cart != null}">
+          Restaurant: <b th:text="${cart.restaurant.name}">Restaurant</b>
+        </div>
+
+        <div class="summaryListX">
+          <div class="sumItemX" th:each="ci : ${items}">
+            <div>
+              <div class="sumName" th:text="${ci.foodItem.name}">Item</div>
+              <div class="muted" th:text="'Qty: ' + ${ci.quantity}">Qty</div>
+            </div>
+            <div class="sumPrice">₹<b th:text="${ci.lineTotal}">0</b></div>
+          </div>
+        </div>
+
+        <div class="sumDividerX"></div>
+
+        <div class="sumTotalX">
+          <span class="muted">Total</span>
+          <span class="totalBig">₹<b th:text="${total}">0</b></span>
+        </div>
+
+        <div class="muted" style="margin-top:10px;">
+          Ensure address is correct for fast delivery.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,727 @@
+<!-- <!-- <!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Restaurant</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+  <div class="section">
+    <h2>Add Restaurant</h2>
+
+    <form th:action="@{/admin/restaurants/save}" method="post" th:object="${restaurant}"
+          style="display:grid; gap:10px; max-width:520px;">
+
+      <input type="text" th:field="*{name}" placeholder="Restaurant Name" required>
+      <input type="text" th:field="*{city}" placeholder="City" required>
+      <input type="text" th:field="*{area}" placeholder="Area">
+      <input type="text" th:field="*{address}" placeholder="Address">
+
+      <input type="text" th:field="*{imageUrl}" placeholder="Image URL (example: /images/r1.jpg)">
+      <label>
+        <input type="checkbox" th:field="*{active}"> Active
+      </label>
+
+      <div class="actions">
+        <a class="btn btn-outline" th:href="@{/admin/restaurants}">Cancel</a>
+        <button class="btn btn-solid" type="submit">Save</button>
+      </div>
+    </form>
+
+  </div>
+</body>
+</html>
+
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="${mode == 'edit' ? 'Edit Restaurant' : 'Add Restaurant'}">Restaurant</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="section">
+  <h2 th:text="${mode == 'edit' ? 'Edit Restaurant' : 'Add Restaurant'}">Restaurant</h2>
+
+  <form th:action="@{/admin/restaurants/save}" method="post" th:object="${restaurant}"
+        class="form-card">
+
+    IMPORTANT: keep id for edit
+    <input type="hidden" th:field="*{id}">
+
+    <label class="muted">Restaurant Name</label>
+    <input type="text" th:field="*{name}" placeholder="Restaurant Name" required>
+
+    <label class="muted">City</label>
+    <input type="text" th:field="*{city}" placeholder="City" required>
+
+    <label class="muted">Area</label>
+    <input type="text" th:field="*{area}" placeholder="Area">
+
+    <label class="muted">Address</label>
+    <input type="text" th:field="*{address}" placeholder="Address">
+
+    <label class="muted">Image URL (example: /images/taj.jpg)</label>
+    <input type="text" th:field="*{imageUrl}" placeholder="/images/restaurant.jpg">
+
+    <div class="muted" style="margin-top:6px;">Preview (optional)</div>
+    <img class="img-preview"
+         th:src="${(restaurant.imageUrl != null and !#strings.isEmpty(restaurant.imageUrl))
+                  ? restaurant.imageUrl : '/images/default-restaurant.jpg'}"
+         alt="Preview">
+
+    <label class="checkline" style="margin-top:8px;">
+      <input type="checkbox" th:field="*{active}">
+      Active
+    </label>
+
+    <div class="actions" style="margin-top:10px;">
+      <a class="btn btn-outline" th:href="@{/admin/restaurants}">Cancel</a>
+      <button class="btn btn-solid" type="submit">Save</button>
+    </div>
+  </form>
+
+</div>
+
+</body>
+</html>
+
+
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="${mode == 'edit' ? 'Edit Restaurant' : 'Add Restaurant'}">Restaurant</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="admin-bg">
+
+<div class="section">
+
+  Header / Breadcrumb
+  <div class="admin-page-head admin-form-head">
+    <div>
+      <div class="admin-breadcrumb">
+        <a th:href="@{/admin/dashboard}">Admin</a>
+        <span> / </span>
+        <a th:href="@{/admin/restaurants}">Restaurants</a>
+        <span> / </span>
+        <span th:text="${mode == 'edit' ? 'Edit' : 'New'}">New</span>
+      </div>
+
+      <h2 style="margin-top:6px;"
+          th:text="${mode == 'edit' ? 'Edit Restaurant' : 'Add Restaurant'}">
+        Add Restaurant
+      </h2>
+
+      <div class="muted">
+        Fill details and check the preview. This looks like a real admin panel.
+      </div>
+    </div>
+
+    <div class="admin-head-actions">
+      <a class="btn btn-outline" th:href="@{/admin/restaurants}">Back</a>
+      <a class="btn btn-outline" th:href="@{/admin/dashboard}">Dashboard</a>
+    </div>
+  </div>
+
+  Form Shell
+  <div class="admin-form-shell">
+    LEFT: FORM
+    <form class="admin-form-card"
+          th:action="@{/admin/restaurants/save}"
+          method="post"
+          th:object="${restaurant}">
+
+      <input type="hidden" th:field="*{id}">
+
+      <div class="form-grid">
+        <div class="fieldX col-2">
+          <label>Restaurant Name <span class="req">*</span></label>
+          <input type="text" th:field="*{name}" placeholder="Eg: FogCity, Taj Hotel, Pizza Hub" required maxlength="120">
+        </div>
+
+        <div class="fieldX">
+          <label>City <span class="req">*</span></label>
+          <input type="text" th:field="*{city}" placeholder="Eg: Nashik" required maxlength="60">
+        </div>
+
+        <div class="fieldX">
+          <label>Area</label>
+          <input type="text" th:field="*{area}" placeholder="Eg: College Road" maxlength="60">
+        </div>
+
+        <div class="fieldX col-2">
+          <label>Address</label>
+          <input type="text" th:field="*{address}" placeholder="Full address (optional)" maxlength="255">
+        </div>
+
+        <div class="fieldX col-2">
+          <label>Image URL</label>
+          <input id="imgUrl" type="text" th:field="*{imageUrl}"
+                 placeholder="/images/default-restaurant.jpg or https://..."
+                 maxlength="255">
+          <div class="muted" style="margin-top:6px;">
+            Tip: Use a good food/restaurant photo for premium look.
+          </div>
+        </div>
+
+        <div class="fieldX col-2">
+          <label class="checklineX">
+            <input type="checkbox" th:field="*{active}">
+            <span>Active (visible to users)</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-actionsX">
+        <a class="btn btn-outline" th:href="@{/admin/restaurants}">Cancel</a>
+        <button class="btn btn-solid" type="submit">Save Restaurant</button>
+      </div>
+    </form>
+
+    RIGHT: PREVIEW
+    <div class="admin-preview-card">
+      <div class="preview-title">Live Preview</div>
+      <div class="muted">See how it will look on user home/restaurant cards.</div>
+
+      <div class="preview-box">
+        <img id="imgPreview" class="preview-img"
+             th:src="${(restaurant.imageUrl != null and !#strings.isEmpty(restaurant.imageUrl))
+                      ? restaurant.imageUrl : '/images/default-restaurant.jpg'}"
+             alt="Preview">
+      </div>
+
+      <div class="preview-meta">
+        <div class="pName" th:text="${restaurant.name != null ? restaurant.name : 'Restaurant Name'}">Restaurant Name</div>
+        <div class="muted">
+          <span th:text="${restaurant.city != null ? restaurant.city : 'City'}">City</span>
+          <span th:if="${restaurant.area != null and !#strings.isEmpty(restaurant.area)}"
+                th:text="' • ' + ${restaurant.area}"> • Area</span>
+        </div>
+
+        <div class="statusLine">
+          <span class="statusPill on" th:if="${restaurant.active}">ACTIVE</span>
+          <span class="statusPill off" th:if="${!restaurant.active}">INACTIVE</span>
+        </div>
+      </div>
+
+      <div class="muted" style="margin-top:10px;">
+        Preview updates when you change the Image URL.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function(){
+    const input = document.getElementById('imgUrl');
+    const img = document.getElementById('imgPreview');
+    if(!input || !img) return;
+
+    function normalize(url){
+      if(!url) return "/images/default-restaurant.jpg";
+      url = url.trim();
+      if(!url) return "/images/default-restaurant.jpg";
+      // if user entered "images/x.jpg" make it "/images/x.jpg"
+      if(!url.startsWith("http") && !url.startsWith("/")) url = "/" + url;
+      return url;
+    }
+
+    input.addEventListener('input', function(){
+      img.src = normalize(input.value);
+    });
+
+    img.addEventListener('error', function(){
+      img.src = "/images/default-restaurant.jpg";
+    });
+  })();
+</script>
+
+</body>
+</html>
+
+
+
+
+FILE: src/main/resources/templates/admin-restaurant-form.html
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="${mode == 'edit' ? 'Edit Restaurant' : 'Add Restaurant'}">Restaurant</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="admin-bg">
+
+<div class="section">
+
+  Header / Breadcrumb
+  <div class="admin-page-head admin-form-head">
+    <div>
+      <div class="admin-breadcrumb">
+        <a th:href="@{/admin/dashboard}">Admin</a>
+        <span> / </span>
+        <a th:href="@{/admin/restaurants}">Restaurants</a>
+        <span> / </span>
+        <span th:text="${mode == 'edit' ? 'Edit' : 'New'}">New</span>
+      </div>
+
+      <h2 style="margin-top:6px;"
+          th:text="${mode == 'edit' ? 'Edit Restaurant' : 'Add Restaurant'}">
+        Add Restaurant
+      </h2>
+
+      <div class="muted">
+        Enter details. Preview updates live (name/city/area/image/status).
+      </div>
+    </div>
+
+    <div class="admin-head-actions">
+      <a class="btn btn-outline" th:href="@{/admin/restaurants}">Back</a>
+      <a class="btn btn-outline" th:href="@{/admin/dashboard}">Dashboard</a>
+    </div>
+  </div>
+
+  Form Shell
+  <div class="admin-form-shell">
+    LEFT: FORM
+    <form class="admin-form-card"
+          th:action="@{/admin/restaurants/save}"
+          method="post"
+          th:object="${restaurant}">
+
+      <input type="hidden" th:field="*{id}">
+
+      <div class="form-grid">
+        <div class="fieldX col-2">
+          <label>Restaurant Name <span class="req">*</span></label>
+          <input id="nameIn" type="text" th:field="*{name}"
+                 placeholder="Eg: FogCity, Taj Hotel, Pizza Hub"
+                 required maxlength="120">
+        </div>
+
+        <div class="fieldX">
+          <label>City <span class="req">*</span></label>
+          <input id="cityIn" type="text" th:field="*{city}"
+                 placeholder="Eg: Nashik"
+                 required maxlength="60">
+        </div>
+
+        <div class="fieldX">
+          <label>Area</label>
+          <input id="areaIn" type="text" th:field="*{area}"
+                 placeholder="Eg: College Road"
+                 maxlength="60">
+        </div>
+
+        <div class="fieldX col-2">
+          <label>Address</label>
+          <input type="text" th:field="*{address}"
+                 placeholder="Full address (optional)"
+                 maxlength="255">
+        </div>
+
+        <div class="fieldX col-2">
+          <label>Image URL</label>
+          <input id="imgUrl" type="text" th:field="*{imageUrl}"
+                 placeholder="/images/default-restaurant.jpg or https://..."
+                 maxlength="255">
+          <div class="muted" style="margin-top:6px;">
+            Tip: Use a restaurant photo for premium UI.
+          </div>
+        </div>
+
+        <div class="fieldX col-2">
+          <label class="checklineX">
+            <input id="activeIn" type="checkbox" th:field="*{active}">
+            <span>Active (visible to users)</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-actionsX">
+        <a class="btn btn-outline" th:href="@{/admin/restaurants}">Cancel</a>
+        <button class="btn btn-solid" type="submit">Save Restaurant</button>
+      </div>
+    </form>
+
+    RIGHT: PREVIEW
+    <div class="admin-preview-card">
+      <div class="preview-title">Live Preview</div>
+      <div class="muted">This is how the restaurant card will look to users.</div>
+
+      <div class="preview-box">
+        <img id="imgPreview" class="preview-img"
+             th:src="${(restaurant.imageUrl != null and !#strings.isEmpty(restaurant.imageUrl))
+                      ? restaurant.imageUrl : '/images/default-restaurant.jpg'}"
+             alt="Preview">
+      </div>
+
+      <div class="preview-meta">
+        <div id="pvName" class="pName"
+             th:text="${restaurant.name != null ? restaurant.name : 'Restaurant Name'}">
+          Restaurant Name
+        </div>
+
+        <div class="muted">
+          <span id="pvCity" th:text="${restaurant.city != null ? restaurant.city : 'City'}">City</span>
+          <span id="pvAreaWrap"
+                th:style="${restaurant.area != null and !#strings.isEmpty(restaurant.area)} ? '' : 'display:none;'">
+            <span> • </span><span id="pvArea" th:text="${restaurant.area}">Area</span>
+          </span>
+        </div>
+
+        <div class="statusLine">
+          <span id="pvActiveOn" class="statusPill on" th:if="${restaurant.active}">ACTIVE</span>
+          <span id="pvActiveOff" class="statusPill off" th:if="${!restaurant.active}">INACTIVE</span>
+        </div>
+      </div>
+
+      <div class="muted" style="margin-top:10px;">
+        Preview updates while typing.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function(){
+    const nameIn = document.getElementById('nameIn');
+    const cityIn = document.getElementById('cityIn');
+    const areaIn = document.getElementById('areaIn');
+    const imgUrl = document.getElementById('imgUrl');
+    const activeIn = document.getElementById('activeIn');
+
+    const pvName = document.getElementById('pvName');
+    const pvCity = document.getElementById('pvCity');
+    const pvArea = document.getElementById('pvArea');
+    const pvAreaWrap = document.getElementById('pvAreaWrap');
+
+    const img = document.getElementById('imgPreview');
+
+    function normalize(url){
+      if(!url) return "/images/default-restaurant.jpg";
+      url = url.trim();
+      if(!url) return "/images/default-restaurant.jpg";
+      if(!url.startsWith("http") && !url.startsWith("/")) url = "/" + url;
+      return url;
+    }
+
+    function syncText(){
+      pvName.innerText = (nameIn.value || "").trim() || "Restaurant Name";
+      pvCity.innerText = (cityIn.value || "").trim() || "City";
+
+      const a = (areaIn.value || "").trim();
+      if(a){
+        pvAreaWrap.style.display = "";
+        pvArea.innerText = a;
+      }else{
+        pvAreaWrap.style.display = "none";
+        pvArea.innerText = "";
+      }
+    }
+
+    function syncImage(){
+      img.src = normalize(imgUrl.value);
+    }
+
+    function syncStatus(){
+      // if spans are removed by thymeleaf th:if, we create them once here
+      let onEl = document.getElementById('pvActiveOn');
+      let offEl = document.getElementById('pvActiveOff');
+
+      if(!onEl){
+        onEl = document.createElement("span");
+        onEl.id = "pvActiveOn";
+        onEl.className = "statusPill on";
+        onEl.innerText = "ACTIVE";
+        document.querySelector(".statusLine").appendChild(onEl);
+      }
+      if(!offEl){
+        offEl = document.createElement("span");
+        offEl.id = "pvActiveOff";
+        offEl.className = "statusPill off";
+        offEl.innerText = "INACTIVE";
+        document.querySelector(".statusLine").appendChild(offEl);
+      }
+
+      const isOn = activeIn.checked;
+      onEl.style.display = isOn ? "inline-block" : "none";
+      offEl.style.display = isOn ? "none" : "inline-block";
+    }
+
+    // Init
+    syncText();
+    syncStatus();
+
+    // Events
+    nameIn.addEventListener('input', syncText);
+    cityIn.addEventListener('input', syncText);
+    areaIn.addEventListener('input', syncText);
+
+    imgUrl.addEventListener('input', syncImage);
+    img.addEventListener('error', () => img.src = "/images/default-restaurant.jpg");
+
+    activeIn.addEventListener('change', syncStatus);
+  })();
+</script>
+
+</body>
+</html> --> 
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="${mode == 'edit' ? 'Edit Restaurant' : 'Add Restaurant'}">Restaurant</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="admin-bg">
+
+<div class="section">
+
+  <!-- HERO HEADER -->
+  <div class="adminFormHero">
+    <div class="adminFormHero-left">
+      <div class="adminFormCrumb">
+        <a th:href="@{/admin/dashboard}">Admin</a>
+        <span> / </span>
+        <a th:href="@{/admin/restaurants}">Restaurants</a>
+        <span> / </span>
+        <span th:text="${mode == 'edit' ? 'Edit' : 'New'}">New</span>
+      </div>
+
+      <div class="adminFormTitleRow">
+        <div class="adminFormIcon">🏨</div>
+        <div>
+          <h2 class="adminFormTitle"
+              th:text="${mode == 'edit' ? 'Edit Restaurant' : 'Add Restaurant'}">
+            Add Restaurant
+          </h2>
+          <div class="adminFormSubtitle muted">
+            Fill details and see a live preview (name/city/area/image/status).
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="adminFormHero-actions">
+      <a class="btn btn-outline" th:href="@{/admin/restaurants}">Back</a>
+      <a class="btn btn-outline" th:href="@{/admin/dashboard}">Dashboard</a>
+    </div>
+  </div>
+
+  <!-- LAYOUT -->
+  <div class="adminFormLayout">
+
+    <!-- FORM CARD -->
+    <form class="adminFormCard"
+          th:action="@{/admin/restaurants/save}"
+          method="post"
+          th:object="${restaurant}">
+
+      <input type="hidden" th:field="*{id}">
+
+      <div class="adminFormSection">
+        <!-- <div class="secTitle">Basic Information</div>
+        <div class="secHint muted">Name and profile image used across the app.</div> -->
+
+        <div class="adminFormGrid">
+          <div class="fieldX col2">
+            <label>Restaurant Name <span class="req">*</span></label>
+            <input id="nameIn"
+                   type="text"
+                   th:field="*{name}"
+                   placeholder="Eg: FogCity, Taj Hotel, Pizza Hub"
+                   required maxlength="120">
+          </div>
+
+          <div class="fieldX col2">
+            <label>Image URL</label>
+            <input id="imgUrl"
+                   type="text"
+                   th:field="*{imageUrl}"
+                   placeholder="/images/default-restaurant.jpg or https://..."
+                   maxlength="255">
+            <div class="muted" style="margin-top:6px;">
+             <!--  Tip: Paste a good restaurant photo URL to make UI premium. -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="adminFormDivider"></div>
+
+      <div class="adminFormSection">
+        <div class="secTitle">Location</div>
+       <!--  <div class="secHint muted">Used for showing city/area on home & restaurant cards.</div> -->
+
+        <div class="adminFormGrid">
+          <div class="fieldX">
+            <label>City <span class="req">*</span></label>
+            <input id="cityIn"
+                   type="text"
+                   th:field="*{city}"
+                   placeholder="Eg: Nashik"
+                   required maxlength="60">
+          </div>
+
+          <div class="fieldX">
+            <label>Area</label>
+            <input id="areaIn"
+                   type="text"
+                   th:field="*{area}"
+                   placeholder="Eg: College Road"
+                   maxlength="60">
+          </div>
+
+          <div class="fieldX col2">
+            <label>Address</label>
+            <input type="text"
+                   th:field="*{address}"
+                   placeholder="Full address (optional)"
+                   maxlength="255">
+          </div>
+        </div>
+      </div>
+
+      <div class="adminFormDivider"></div>
+
+      <div class="adminFormSection">
+        <div class="secTitle">Status</div>
+        <div class="secHint muted">Inactive restaurants will not be visible to users.</div>
+
+        <label class="checklineX">
+          <input id="activeIn" type="checkbox" th:field="*{active}">
+          <span><b>Active</b> (visible to users)</span>
+        </label>
+      </div>
+
+      <div class="adminFormActions">
+        <a class="btn btn-outline" th:href="@{/admin/restaurants}">Cancel</a>
+        <button class="btn btn-solid" type="submit">Save Restaurant</button>
+      </div>
+    </form>
+
+    <!-- PREVIEW CARD -->
+    <div class="adminPreviewCard">
+      <div class="previewHead">
+        <div>
+          <div class="previewTitle">Live Preview</div>
+         <!--  <div class="muted">How it will look to users.</div> -->
+        </div>
+        <span id="pvStatusChip" class="statusChip on">ACTIVE</span>
+      </div>
+
+      <div class="previewImageWrap">
+        <img id="imgPreview"
+             th:src="${(restaurant.imageUrl != null and !#strings.isEmpty(restaurant.imageUrl))
+                      ? restaurant.imageUrl : '/images/default-restaurant.jpg'}"
+             alt="Preview">
+      </div>
+
+      <div class="previewBody">
+        <div id="pvName" class="pvName"
+             th:text="${restaurant.name != null ? restaurant.name : 'Restaurant Name'}">
+          Restaurant Name
+        </div>
+
+        <div class="pvLoc muted">
+          <span id="pvCity" th:text="${restaurant.city != null ? restaurant.city : 'City'}">City</span>
+          <span id="pvAreaWrap"
+                th:style="${restaurant.area != null and !#strings.isEmpty(restaurant.area)} ? '' : 'display:none;'">
+            <span> • </span><span id="pvArea" th:text="${restaurant.area}">Area</span>
+          </span>
+        </div>
+
+        <!-- <div class="pvHint muted">
+          Preview updates while typing.
+        </div> -->
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  (function(){
+    const nameIn = document.getElementById('nameIn');
+    const cityIn = document.getElementById('cityIn');
+    const areaIn = document.getElementById('areaIn');
+    const imgUrl = document.getElementById('imgUrl');
+    const activeIn = document.getElementById('activeIn');
+
+    const pvName = document.getElementById('pvName');
+    const pvCity = document.getElementById('pvCity');
+    const pvArea = document.getElementById('pvArea');
+    const pvAreaWrap = document.getElementById('pvAreaWrap');
+    const pvStatusChip = document.getElementById('pvStatusChip');
+
+    const img = document.getElementById('imgPreview');
+
+    function normalize(url){
+      if(!url) return "/images/default-restaurant.jpg";
+      url = url.trim();
+      if(!url) return "/images/default-restaurant.jpg";
+      if(!url.startsWith("http") && !url.startsWith("/")) url = "/" + url;
+      return url;
+    }
+
+    function syncText(){
+      pvName.textContent = (nameIn.value || "").trim() || "Restaurant Name";
+      pvCity.textContent = (cityIn.value || "").trim() || "City";
+
+      const a = (areaIn.value || "").trim();
+      if(a){
+        pvAreaWrap.style.display = "";
+        pvArea.textContent = a;
+      } else {
+        pvAreaWrap.style.display = "none";
+        pvArea.textContent = "";
+      }
+    }
+
+    function syncImage(){
+      img.src = normalize(imgUrl.value);
+    }
+
+    function syncStatus(){
+      const on = !!activeIn.checked;
+      pvStatusChip.textContent = on ? "ACTIVE" : "INACTIVE";
+      pvStatusChip.classList.toggle("on", on);
+      pvStatusChip.classList.toggle("off", !on);
+    }
+
+    // init
+    syncText();
+    syncStatus();
+
+    // events
+    nameIn.addEventListener('input', syncText);
+    cityIn.addEventListener('input', syncText);
+    areaIn.addEventListener('input', syncText);
+
+    imgUrl.addEventListener('input', syncImage);
+    img.addEventListener('error', () => img.src = "/images/default-restaurant.jpg");
+
+    activeIn.addEventListener('change', syncStatus);
+  })();
+</script>
+
+</body>
+</html>

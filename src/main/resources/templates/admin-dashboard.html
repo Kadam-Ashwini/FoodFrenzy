@@ -1,0 +1,293 @@
+<!-- 
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+  <div class="section">
+    <h2>Admin Dashboard</h2>
+
+    <p class="welcome-text">
+      Welcome <b th:text="${session.userName}">Admin</b>.
+    </p>
+
+    <div class="actions">
+      <a class="btn btn-outline" th:href="@{/logout}">Logout</a>
+      <a class="btn btn-solid" th:href="@{/}">Go Home</a>
+    </div>
+
+    <hr class="hr">
+
+    <h3 style="margin-bottom:10px;">Management</h3>
+    <div class="actions">
+    
+    
+      <a class="btn btn-solid" th:href="@{/admin/restaurants}">Manage Restaurants</a>
+      <a class="btn btn-solid" th:href="@{/admin/orders}">Manage Orders</a>
+      <a class="btn btn-solid" th:href="@{/admin/users}">Manage Users</a>
+      <a class="btn btn-solid" th:href="@{/admin/reports/dashboard}">Reports Dashboard</a>
+      <a class="btn btn-solid" th:href="@{/admin/feedback}">View Feedback</a>
+    </div>
+  </div>
+
+</body>
+</html> -->
+
+
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body  class="admin-bg">
+
+<div class="section">
+
+  
+  <div class="admin-hero">
+    <div>
+      <div class="admin-title">Admin Dashboard</div>
+      <div class="admin-sub">
+        Welcome back, <b th:text="${session.userName}">Admin</b>. Manage restaurants, orders & reports.
+      </div>
+    </div>
+
+    <div class="admin-hero-actions">
+      <!-- <a class="btn btn-outline" th:href="@{/}">Go to Website</a> -->
+      <a class="btn btn-solid" th:href="@{/logout}">Logout</a>
+    </div>
+  </div>
+
+  
+  <div class="admin-kpi-grid">
+    <div class="admin-kpi">
+      <div class="kpi-label">Restaurants</div>
+      <div class="kpi-number" th:text="${restaurantsCount}">0</div>
+      <div class="kpi-hint muted">Total hotels in system</div>
+    </div>
+
+    <div class="admin-kpi">
+      <div class="kpi-label">Orders</div>
+      <div class="kpi-number" th:text="${ordersCount}">0</div>
+      <div class="kpi-hint muted">All orders placed</div>
+    </div>
+
+    <div class="admin-kpi">
+      <div class="kpi-label">Users</div>
+      <div class="kpi-number" th:text="${usersCount}">0</div>
+      <div class="kpi-hint muted">Registered customers</div>
+    </div>
+
+    <div class="admin-kpi">
+      <div class="kpi-label">Feedback</div>
+      <div class="kpi-number" th:text="${feedbackCount}">0</div>
+      <div class="kpi-hint muted">Reviews submitted</div>
+    </div>
+  </div>
+
+  <div class="admin-section-title">Management</div>
+
+  
+  <div class="admin-grid">
+    <a class="admin-card" th:href="@{/admin/restaurants}">
+      <div class="admin-icon">🍽</div>
+      <div>
+        <div class="admin-card-title">Manage Restaurants</div>
+        <div class="muted">Add / edit / activate hotels</div>
+      </div>
+      <div class="admin-go">→</div>
+    </a>
+
+    <a class="admin-card" th:href="@{/admin/orders}">
+      <div class="admin-icon">📦</div>
+      <div>
+        <div class="admin-card-title">Manage Orders</div>
+        <div class="muted">Update status, assign delivery</div>
+      </div>
+      <div class="admin-go">→</div>
+    </a>
+
+    <a class="admin-card" th:href="@{/admin/users}">
+      <div class="admin-icon">👥</div>
+      <div>
+        <div class="admin-card-title">Manage Users</div>
+        <div class="muted">Enable/disable accounts</div>
+      </div>
+      <div class="admin-go">→</div>
+    </a>
+
+    <a class="admin-card" th:href="@{/admin/reports/dashboard}">
+      <div class="admin-icon">📊</div>
+      <div>
+        <div class="admin-card-title">Reports Dashboard</div>
+        <div class="muted">Revenue, status analytics</div>
+      </div>
+      <div class="admin-go">→</div>
+    </a>
+
+    <a class="admin-card" th:href="@{/admin/feedback}">
+      <div class="admin-icon">⭐</div>
+      <div>
+        <div class="admin-card-title">View Feedback</div>
+        <div class="muted">Ratings & comments</div>
+      </div>
+      <div class="admin-go">→</div>
+    </a>
+  </div>
+
+</div>
+
+</body>
+</html> 
+
+<!-- 
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="section">
+
+  HERO (gradient + actions)
+  <div class="admin-heroX">
+    <div>
+      <div class="admin-heroX-title">Admin Dashboard</div>
+      <div class="admin-heroX-sub">
+        Welcome back, <b th:text="${session.userName}">Admin</b>. Control restaurants, orders & reports.
+      </div>
+
+      <div class="admin-heroX-tags">
+        <span class="tagX">FoodFrenzy Admin</span>
+        <span class="tagX" th:text="'Today Orders: ' + ${todayOrders}">Today Orders: 0</span>
+        <span class="tagX" th:text="'Today Paid: ₹' + ${todayRevenuePaid}">Today Paid: ₹0</span>
+      </div>
+    </div>
+
+    <div class="admin-heroX-actions">
+      <a class="btn btn-outline" th:href="@{/}">Go to Website</a>
+      <a class="btn btn-solid" th:href="@{/logout}">Logout</a>
+    </div>
+  </div>
+
+  KPI CARDS
+  <div class="kpiX-grid">
+    <div class="kpiX tone-red">
+      <div class="kpiX-label">Total Orders</div>
+      <div class="kpiX-value" th:text="${totalOrders}">0</div>
+      <div class="kpiX-sub muted">All time</div>
+    </div>
+
+    <div class="kpiX tone-green">
+      <div class="kpiX-label">Paid Revenue</div>
+      <div class="kpiX-value">₹<span th:text="${totalRevenuePaid}">0</span></div>
+      <div class="kpiX-sub muted">Paid only</div>
+    </div>
+
+    <div class="kpiX tone-indigo">
+      <div class="kpiX-label">Restaurants</div>
+      <div class="kpiX-value" th:text="${restaurantsCount}">0</div>
+      <div class="kpiX-sub muted">Hotels in system</div>
+    </div>
+
+    <div class="kpiX tone-amber">
+      <div class="kpiX-label">Users</div>
+      <div class="kpiX-value" th:text="${usersCount}">0</div>
+      <div class="kpiX-sub muted">Registered</div>
+    </div>
+
+    <div class="kpiX tone-pink">
+      <div class="kpiX-label">Feedback</div>
+      <div class="kpiX-value" th:text="${feedbackCount}">0</div>
+      <div class="kpiX-sub muted">Reviews</div>
+    </div>
+
+    <div class="kpiX tone-slate">
+      <div class="kpiX-label">Today Orders</div>
+      <div class="kpiX-value" th:text="${todayOrders}">0</div>
+      <div class="kpiX-sub muted">Since 00:00</div>
+    </div>
+  </div>
+
+  INSIGHTS: STATUS BAR CHART
+  <div class="admin-insightsX" th:with="t=${totalOrders}">
+    <div class="insX-head">
+      <div>
+        <div class="insX-title">Order Status Overview</div>
+        <div class="muted">Distribution of orders by current status</div>
+      </div>
+      <a class="btn btn-outline" th:href="@{/admin/orders}">Open Orders</a>
+    </div>
+
+    <div class="statusX-list">
+      <div class="statusX-row" th:each="e : ${ordersByStatus.entrySet()}"
+           th:with="pct=${t > 0 ? (e.value * 100.0 / t) : 0}">
+        <div class="statusX-name">
+          <span class="badge" th:text="${e.key}">CREATED</span>
+        </div>
+
+        <div class="statusX-bar">
+          <div class="statusX-fill"
+               th:style="'width:' + ${pct} + '%'"></div>
+        </div>
+
+        <div class="statusX-count" th:text="${e.value}">0</div>
+      </div>
+    </div>
+  </div>
+
+  MANAGEMENT
+  <div class="admin-sectionX-title">Management</div>
+
+  <div class="admin-gridX">
+    <a class="admin-cardX" th:href="@{/admin/restaurants}">
+      <div class="admin-cardX-title">Manage Restaurants</div>
+      <div class="muted">Add / edit / activate hotels</div>
+      <div class="admin-cardX-go">→</div>
+    </a>
+
+    <a class="admin-cardX" th:href="@{/admin/orders}">
+      <div class="admin-cardX-title">Manage Orders</div>
+      <div class="muted">Update status, assign delivery</div>
+      <div class="admin-cardX-go">→</div>
+    </a>
+
+    <a class="admin-cardX" th:href="@{/admin/users}">
+      <div class="admin-cardX-title">Manage Users</div>
+      <div class="muted">Enable / disable accounts</div>
+      <div class="admin-cardX-go">→</div>
+    </a>
+
+    <a class="admin-cardX" th:href="@{/admin/reports/dashboard}">
+      <div class="admin-cardX-title">Reports Dashboard</div>
+      <div class="muted">Revenue & analytics</div>
+      <div class="admin-cardX-go">→</div>
+    </a>
+
+    <a class="admin-cardX" th:href="@{/admin/feedback}">
+      <div class="admin-cardX-title">View Feedback</div>
+      <div class="muted">Ratings & comments</div>
+      <div class="admin-cardX-go">→</div>
+    </a>
+  </div>
+
+</div>
+
+</body>
+</html> -->

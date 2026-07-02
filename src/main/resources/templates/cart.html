@@ -1,0 +1,351 @@
+<!-- <!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Cart</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="navbar">
+  <div class="logo">
+    <img th:src="@{/images/logo.png}" alt="Logo">
+    <span>FoodFrenzy</span>
+  </div>
+
+  <div class="nav-actions">
+    <a class="btn btn-outline" th:href="@{/}">Home</a>
+    <div class="auth-buttons user-area" th:if="${session.userName != null}">
+      <span class="hello">Hello, <b th:text="${session.userName}">User</b></span>
+      <a class="btn btn-outline" th:href="@{/logout}">Logout</a>
+    </div>
+  </div>
+</header>
+
+<div class="section">
+  <h2>Your Cart</h2>
+
+  <p class="msg" th:if="${msg}" th:text="${msg}"></p>
+
+  <div th:if="${#lists.isEmpty(items)}" class="muted" style="margin-top:10px;">
+    Your cart is empty.
+  </div>
+
+  <div th:if="${!#lists.isEmpty(items)}" class="cart-wrap">
+    <div class="cart-list">
+      <div class="cart-item" th:each="ci : ${items}">
+        <img class="cart-img"
+             th:src="${(ci.foodItem.imageUrl != null and !#strings.isEmpty(ci.foodItem.imageUrl))
+                      ? (#strings.startsWith(ci.foodItem.imageUrl,'/') ? ci.foodItem.imageUrl : '/' + ci.foodItem.imageUrl)
+                      : '/images/default-food.jpg'}"
+             alt="Food">
+
+        <div class="cart-info">
+          <h4 th:text="${ci.foodItem.name}">Food</h4>
+          <p class="muted" th:text="${ci.foodItem.category}">Category</p>
+          <p style="margin-top:6px;">₹<b th:text="${ci.unitPrice}">0</b></p>
+
+          <div class="cart-actions">
+            <form th:action="@{/cart/update}" method="post" class="qty-form">
+              <input type="hidden" name="cartItemId" th:value="${ci.id}">
+              <input type="number" name="qty" min="1" th:value="${ci.quantity}">
+              <button class="btn btn-outline" type="submit">Update</button>
+            </form>
+
+            <form th:action="@{/cart/remove}" method="post">
+              <input type="hidden" name="cartItemId" th:value="${ci.id}">
+              <button class="btn btn-outline" type="submit">Remove</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="cart-total">
+          <div class="muted">Item Total</div>
+          <div>₹<b th:text="${ci.lineTotal}">0</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cart-summary">
+      <h3>Summary</h3>
+      <p class="muted" th:if="${cart != null}">
+        Restaurant: <b th:text="${cart.restaurant.name}">Restaurant</b>
+      </p>
+
+      <div class="sum-row">
+        <span>Total</span>
+        <span>₹<b th:text="${total}">0</b></span>
+      </div>
+
+      <form th:action="@{/cart/clear}" method="post" style="margin-top:12px;">
+        <button class="btn btn-outline" type="submit">Clear Cart</button>
+      </form>
+
+      Next step: Checkout
+      <button class="btn btn-solid" type="button" disabled style="margin-top:12px; width:100%;">
+        Checkout (next step)
+      </button>
+      <a class="btn btn-solid" th:href="@{/checkout}" style="margin-top:12px; width:100%; text-align:center;">
+  Checkout
+</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html> -->
+
+
+<!-- 
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Cart</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+  Common Navbar
+  <div th:replace="~{fragments/navbar :: appNavbar}"></div>
+
+  <div class="section">
+    <h2>Your Cart</h2>
+
+    <p class="msg" th:if="${msg}" th:text="${msg}"></p>
+
+    <div th:if="${#lists.isEmpty(items)}" class="muted" style="margin-top:10px;">
+      Your cart is empty.
+    </div>
+
+    <div th:if="${!#lists.isEmpty(items)}" class="cart-wrap">
+      <div class="cart-list">
+        <div class="cart-item" th:each="ci : ${items}">
+          <img class="cart-img"
+               th:src="${(ci.foodItem.imageUrl != null and !#strings.isEmpty(ci.foodItem.imageUrl))
+                        ? (#strings.startsWith(ci.foodItem.imageUrl,'/') ? ci.foodItem.imageUrl : '/' + ci.foodItem.imageUrl)
+                        : '/images/default-food.jpg'}"
+               alt="Food">
+
+          <div class="cart-info">
+            <h4 th:text="${ci.foodItem.name}">Food</h4>
+            <p class="muted" th:text="${ci.foodItem.category}">Category</p>
+            <p style="margin-top:6px;">₹<b th:text="${ci.unitPrice}">0</b></p>
+
+            <div class="cart-actions">
+              <form th:action="@{/cart/update}" method="post" class="qty-form">
+                <input type="hidden" name="cartItemId" th:value="${ci.id}">
+                <input type="number" name="qty" min="1" th:value="${ci.quantity}">
+                <button class="btn btn-outline" type="submit">Update</button>
+              </form>
+
+              <form th:action="@{/cart/remove}" method="post">
+                <input type="hidden" name="cartItemId" th:value="${ci.id}">
+                <button class="btn btn-outline" type="submit">Remove</button>
+              </form>
+            </div>
+          </div>
+
+          <div class="cart-total">
+            <div class="muted">Item Total</div>
+            <div>₹<b th:text="${ci.lineTotal}">0</b></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cart-summary">
+        <h3>Summary</h3>
+        <p class="muted" th:if="${cart != null}">
+          Restaurant: <b th:text="${cart.restaurant.name}">Restaurant</b>
+        </p>
+
+        <div class="sum-row">
+          <span>Total</span>
+          <span>₹<b th:text="${total}">0</b></span>
+        </div>
+
+        <form th:action="@{/cart/clear}" method="post" style="margin-top:12px;">
+          <button class="btn btn-outline" type="submit">Clear Cart</button>
+        </form>
+
+        <a class="btn btn-solid"
+           th:href="@{/checkout}"
+           style="margin-top:12px; width:100%; text-align:center;">
+          Checkout
+        </a>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html> -->
+
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Cart</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="cart-bg">
+
+  <!-- Navbar -->
+  <div th:replace="~{fragments/navbar :: appNavbar}"></div>
+
+  <div class="section cartPage">
+
+    <!-- Page Head -->
+    <div class="cartHead">
+      <div>
+        <h2 style="margin-bottom:6px;">Your Cart</h2>
+        <div class="muted" th:if="${cart != null}">
+          Restaurant: <b th:text="${cart.restaurant.name}">Restaurant</b>
+        </div>
+        <div class="muted" th:if="${cart == null}">
+          Add items from a restaurant to see them here.
+        </div>
+      </div>
+
+      <div class="cartHeadActions">
+        <a class="btn btn-outline" th:href="@{/}">Continue Shopping</a>
+        <form th:if="${!#lists.isEmpty(items)}" th:action="@{/cart/clear}" method="post" style="display:inline;">
+          <button class="btn btn-outline" type="submit">Clear Cart</button>
+        </form>
+      </div>
+    </div>
+
+    <p class="msg" th:if="${msg}" th:text="${msg}"></p>
+
+    <!-- Empty -->
+    <div class="cartEmpty" th:if="${#lists.isEmpty(items)}">
+      <div class="cartEmptyCard">
+        <div class="cartEmptyTitle">Your cart is empty</div>
+        <div class="muted">Browse restaurants and add tasty items.</div>
+        <a class="btn btn-solid" th:href="@{/}" style="margin-top:12px;">Browse Restaurants</a>
+      </div>
+    </div>
+
+    <!-- Main -->
+    <div class="cartGrid" th:if="${!#lists.isEmpty(items)}">
+
+      <!-- LEFT: Items -->
+      <div class="cartLeft">
+
+        <div class="cartItemCard" th:each="ci : ${items}">
+          <img class="cartItemImg"
+               th:src="${(ci.foodItem.imageUrl != null and !#strings.isEmpty(ci.foodItem.imageUrl))
+                        ? (#strings.startsWith(ci.foodItem.imageUrl,'/') ? ci.foodItem.imageUrl : '/' + ci.foodItem.imageUrl)
+                        : '/images/default-food.jpg'}"
+               alt="Food">
+
+          <div class="cartItemInfo">
+            <div class="cartItemTop">
+              <div>
+                <div class="cartItemName" th:text="${ci.foodItem.name}">Food</div>
+                <div class="muted" th:text="${ci.foodItem.category}">Category</div>
+              </div>
+
+              <span class="pill"
+                    th:text="${ci.foodItem.veg ? 'VEG' : 'NON-VEG'}"
+                    th:classappend="${ci.foodItem.veg ? ' pay-paid' : ' pay-failed'}">
+                VEG
+              </span>
+            </div>
+
+            <div class="cartItemPrices">
+              <div class="muted">Unit Price</div>
+              <div class="price">₹<b th:text="${ci.unitPrice}">0</b></div>
+
+              <div class="muted">Item Total</div>
+              <div class="price">₹<b th:text="${ci.lineTotal}">0</b></div>
+            </div>
+
+            <div class="cartItemActions">
+              <!-- Qty Stepper (submits your existing /cart/update form) -->
+              <form class="qtyForm" th:action="@{/cart/update}" method="post">
+                <input type="hidden" name="cartItemId" th:value="${ci.id}">
+                <div class="qtyStepper" data-stepper>
+                  <button type="button" class="stepBtn" data-minus>−</button>
+                  <input class="qtyInput" type="number" name="qty" min="1" th:value="${ci.quantity}">
+                  <button type="button" class="stepBtn" data-plus>+</button>
+                </div>
+                <button class="btn btn-outline btn-sm" type="submit">Update</button>
+              </form>
+
+              <form th:action="@{/cart/remove}" method="post">
+                <input type="hidden" name="cartItemId" th:value="${ci.id}">
+                <button class="btn btn-outline btn-sm" type="submit">Remove</button>
+              </form>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: Summary -->
+      <div class="cartRight">
+        <div class="cartSummaryCard">
+          <div class="sumTitle">Order Summary</div>
+
+          <div class="sumRow">
+            <span class="muted">Items</span>
+            <b th:text="${#lists.size(items)}">0</b>
+          </div>
+
+          <div class="sumRow">
+            <span class="muted">Total</span>
+            <span>₹<b th:text="${total}">0</b></span>
+          </div>
+
+          <div class="sumDivider"></div>
+
+          <a class="btn btn-solid w100" th:href="@{/checkout}">Checkout</a>
+
+          <!-- <div class="muted" style="margin-top:10px;">
+            Tip: Cart supports only one restaurant at a time.
+          </div> -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+  // Qty stepper (+/-) without changing backend
+  (function(){
+    document.querySelectorAll('[data-stepper]').forEach(stepper=>{
+      const input = stepper.querySelector('input');
+      const minus = stepper.querySelector('[data-minus]');
+      const plus = stepper.querySelector('[data-plus]');
+
+      function clamp(){
+        let v = parseInt(input.value || '1', 10);
+        if(isNaN(v) || v < 1) v = 1;
+        input.value = v;
+      }
+
+      minus.addEventListener('click', ()=>{
+        clamp();
+        input.value = Math.max(1, parseInt(input.value,10) - 1);
+      });
+
+      plus.addEventListener('click', ()=>{
+        clamp();
+        input.value = parseInt(input.value,10) + 1;
+      });
+
+      input.addEventListener('input', clamp);
+      clamp();
+    });
+  })();
+</script>
+
+</body>
+</html>

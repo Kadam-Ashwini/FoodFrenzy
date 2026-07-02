@@ -1,0 +1,254 @@
+<!-- <!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin - Feedback</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="section">
+  <h2>Customer Feedback (Admin)</h2>
+
+  <div class="actions" style="margin-bottom:12px;">
+    <a class="btn btn-outline" th:href="@{/admin/dashboard}">Back</a>
+    <a class="btn btn-outline" th:href="@{/admin/orders}">Orders</a>
+  </div>
+
+  <div class="muted" th:if="${#lists.isEmpty(feedbacks)}">No feedback yet.</div>
+
+  <div class="table" th:if="${!#lists.isEmpty(feedbacks)}">
+    <div class="trow thead" style="grid-template-columns: 90px 1.2fr 1.2fr 120px 1.6fr;">
+      <div>ID</div>
+      <div>User</div>
+      <div>Restaurant</div>
+      <div>Rating</div>
+      <div>Comment</div>
+    </div>
+
+    <div class="trow" th:each="f : ${feedbacks}" style="grid-template-columns: 90px 1.2fr 1.2fr 120px 1.6fr;">
+      <div th:text="${f.id}">1</div>
+      <div th:text="${f.user.fullName}">User</div>
+      <div th:text="${f.restaurant.name}">Restaurant</div>
+      <div><span class="badge" th:text="${f.rating + '/5'}">5/5</span></div>
+      <div class="muted" th:text="${f.comment}">Comment</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html> -->
+
+<!-- 
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin - Feedback</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="section">
+  <h2>Customer Feedback (Admin)</h2>
+
+  <div class="actions" style="margin-bottom:12px;">
+    <a class="btn btn-outline" th:href="@{/admin/dashboard}">Back</a>
+    <a class="btn btn-outline" th:href="@{/admin/orders}">Orders</a>
+  </div>
+
+  <div class="muted" th:if="${#lists.isEmpty(feedbacks)}">No feedback yet.</div>
+
+  <div class="table" th:if="${!#lists.isEmpty(feedbacks)}">
+    <div class="trow thead" style="grid-template-columns: 90px 1.2fr 1.2fr 120px 1.6fr;">
+      <div>ID</div>
+      <div>User</div>
+      <div>Restaurant</div>
+      <div>Rating</div>
+      <div>Comment</div>
+    </div>
+
+    <div class="trow" th:each="f : ${feedbacks}" style="grid-template-columns: 90px 1.2fr 1.2fr 120px 1.6fr;">
+      <div th:text="${f.id}">1</div>
+      <div th:text="${f.user.fullName}">User</div>
+      <div th:text="${f.restaurant.name}">Restaurant</div>
+      <div><span class="badge" th:text="${f.rating + '/5'}">5/5</span></div>
+      <div class="muted" th:text="${f.comment}">Comment</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin - Feedback</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body  class="admin-bg">
+
+<div class="section">
+
+  <!-- HERO -->
+  <div class="adminFormHero">
+    <div class="adminFormHero-left">
+      <div class="adminFormCrumb">
+        <a th:href="@{/admin/dashboard}">Admin</a>
+        <span> / </span>
+        <span>Feedback</span>
+      </div>
+
+      <div class="adminFormTitleRow">
+        <div class="adminFormIcon">⭐</div>
+        <div>
+          <h2 class="adminFormTitle">Customer Feedback</h2>
+          <!-- <div class="adminFormSubtitle muted">
+            Read reviews, search by user/restaurant, and monitor ratings.
+          </div> -->
+        </div>
+      </div>
+    </div>
+
+    <div class="adminFormHero-actions">
+      <a class="btn btn-outline" th:href="@{/admin/dashboard}">Back</a>
+      <a class="btn btn-outline" th:href="@{/admin/orders}">Orders</a>
+    </div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="adminFilterCard">
+    <div class="fbTop">
+      <div class="searchbox" style="flex:1;">
+        <input id="fbSearch" type="text" placeholder="Search by user / restaurant / comment..." />
+        <div class="muted" style="margin-top:6px;">Example: “fogcity”, “good”, “late”, “admin”</div>
+      </div>
+
+      <div class="admin-chips">
+        <div class="chipX">
+          <div class="muted">Total Reviews</div>
+          <div class="chipX-val" id="fbCount">0</div>
+        </div>
+        <div class="chipX">
+          <div class="muted">Average Rating</div>
+          <div class="chipX-val" id="fbAvg">0.0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fbQuickFilters">
+      <button class="btn btn-outline btn-sm" type="button" onclick="filterRating('all')">All</button>
+      <button class="btn btn-outline btn-sm" type="button" onclick="filterRating('5')">5★</button>
+      <button class="btn btn-outline btn-sm" type="button" onclick="filterRating('4')">4★</button>
+      <button class="btn btn-outline btn-sm" type="button" onclick="filterRating('3')">3★</button>
+      <button class="btn btn-outline btn-sm" type="button" onclick="filterRating('2')">2★</button>
+      <button class="btn btn-outline btn-sm" type="button" onclick="filterRating('1')">1★</button>
+    </div>
+  </div>
+
+  <!-- EMPTY -->
+  <div class="muted" th:if="${#lists.isEmpty(feedbacks)}" style="margin-top:14px;">
+    No feedback yet.
+  </div>
+
+  <!-- CARDS -->
+  <div class="fbGrid" th:if="${!#lists.isEmpty(feedbacks)}">
+    <div class="fbCard"
+         th:each="f : ${feedbacks}"
+         th:attr="data-user=${f.user.fullName},
+                  data-rest=${f.restaurant.name},
+                  data-comment=${f.comment},
+                  data-rating=${f.rating}">
+
+      <div class="fbHead">
+        <div>
+          <div class="fbUser" th:text="${f.user.fullName}">User</div>
+          <div class="muted">
+            <span th:text="${f.restaurant.name}">Restaurant</span>
+            <span class="dotSep">•</span>
+            <span th:text="'Order #' + ${f.order.id}">Order #</span>
+          </div>
+        </div>
+
+        <div class="fbRatingBox">
+          <!-- Stars -->
+          <div class="stars" th:attr="data-stars=${f.rating}">
+            <span class="star" th:classappend="${f.rating >= 1} ? ' filled' : ''">★</span>
+            <span class="star" th:classappend="${f.rating >= 2} ? ' filled' : ''">★</span>
+            <span class="star" th:classappend="${f.rating >= 3} ? ' filled' : ''">★</span>
+            <span class="star" th:classappend="${f.rating >= 4} ? ' filled' : ''">★</span>
+            <span class="star" th:classappend="${f.rating >= 5} ? ' filled' : ''">★</span>
+          </div>
+          <div class="pill fbPill" th:text="${f.rating + '/5'}">5/5</div>
+        </div>
+      </div>
+
+      <div class="fbBody">
+        <div class="fbComment"
+             th:text="${(f.comment != null and !#strings.isEmpty(f.comment)) ? f.comment : 'No comment provided.'}">
+          Comment
+        </div>
+
+        <div class="fbMeta muted">
+          Submitted:
+          <b th:text="${#temporals.format(f.createdAt, 'dd MMM yyyy, hh:mm a')}">date</b>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const fbSearch = document.getElementById('fbSearch');
+  const fbCards = Array.from(document.querySelectorAll('.fbCard'));
+  let activeRating = "all";
+
+  function updateStats(){
+    let visible = 0;
+    let sum = 0;
+
+    fbCards.forEach(c=>{
+      if(c.style.display === 'none') return;
+      visible++;
+      sum += parseInt(c.dataset.rating || "0", 10);
+    });
+
+    document.getElementById('fbCount').innerText = visible;
+    document.getElementById('fbAvg').innerText = visible ? (sum/visible).toFixed(1) : "0.0";
+  }
+
+  function applyFilters(){
+    const q = (fbSearch.value || "").toLowerCase().trim();
+
+    fbCards.forEach(c=>{
+      const ratingOk = (activeRating === "all") || (c.dataset.rating === activeRating);
+      const text = `${c.dataset.user} ${c.dataset.rest} ${c.dataset.comment}`.toLowerCase();
+      const searchOk = text.includes(q);
+
+      c.style.display = (ratingOk && searchOk) ? "" : "none";
+    });
+
+    updateStats();
+  }
+
+  function filterRating(r){
+    activeRating = r;
+    applyFilters();
+  }
+
+  fbSearch.addEventListener('input', applyFilters);
+  updateStats();
+</script>
+
+</body>
+</html>

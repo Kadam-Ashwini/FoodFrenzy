@@ -1,0 +1,522 @@
+<!-- <!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Orders</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="navbar">
+  <div class="logo">
+    <img th:src="@{/images/logo.png}" alt="Logo">
+    <span>FoodFrenzy</span>
+  </div>
+
+  <div class="nav-actions">
+    <a class="btn btn-outline" th:href="@{/}">Home</a>
+    <a class="btn btn-outline" th:href="@{/cart}">Cart</a>
+
+    <div class="auth-buttons user-area" th:if="${session.userName != null}">
+      <span class="hello">Hello, <b th:text="${session.userName}">User</b></span>
+      <a class="btn btn-outline" th:href="@{/logout}">Logout</a>
+    </div>
+  </div>
+</header>
+
+<div class="section">
+  <h2>My Orders</h2>
+
+  <div class="muted" th:if="${#lists.isEmpty(orders)}" style="margin-top:10px;">
+    No orders yet.
+  </div>
+
+  <div class="table" th:if="${!#lists.isEmpty(orders)}">
+    <div class="trow thead">
+      <div>Order ID</div>
+      <div>Restaurant</div>
+      <div>Status</div>
+      <div>Total</div>
+      <div>Action</div>
+    </div>
+
+    <div class="trow" th:each="o : ${orders}">
+      <div th:text="${o.id}">1</div>
+      <div th:text="${o.restaurant.name}">Restaurant</div>
+      <div>
+        <span class="badge" th:text="${o.status}">CREATED</span>
+      </div>
+      <div>₹<b th:text="${o.totalAmount}">0</b></div>
+      <div>
+        <a class="btn btn-outline" th:href="@{/orders/{id}(id=${o.id})}">Track</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html> -->
+
+
+<!-- 
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Orders</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+  Common Navbar
+  <div th:replace="~{fragments/navbar :: appNavbar}"></div>
+
+  <div class="section">
+    <h2>My Orders</h2>
+
+    <div class="muted" th:if="${#lists.isEmpty(orders)}" style="margin-top:10px;">
+      No orders yet.
+    </div>
+
+    <div class="table" th:if="${!#lists.isEmpty(orders)}">
+      <div class="trow thead">
+        <div>Order ID</div>
+        <div>Restaurant</div>
+        <div>Status</div>
+        <div>Total</div>
+        <div>Action</div>
+      </div>
+
+      <div class="trow" th:each="o : ${orders}">
+        <div th:text="${o.id}">1</div>
+        <div th:text="${o.restaurant.name}">Restaurant</div>
+        <div>
+          <span class="badge" th:text="${o.status}">CREATED</span>
+        </div>
+        <div>₹<b th:text="${o.totalAmount}">0</b></div>
+        <div>
+          <a class="btn btn-outline" th:href="@{/orders/{id}(id=${o.id})}">Track</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html> -->
+
+
+<!-- 
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Orders</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+  Common Navbar
+  <div th:replace="~{fragments/navbar :: appNavbar}"></div>
+
+  <div class="section">
+    <div class="orders-head">
+      <div>
+        <h2 style="margin-bottom:6px;">My Orders</h2>
+        <div class="muted">Track, pay, invoice and view ordered items.</div>
+      </div>
+      <a class="btn btn-outline" th:href="@{/}">Continue Browsing</a>
+    </div>
+
+    <div class="muted" th:if="${#lists.isEmpty(orders)}" style="margin-top:12px;">
+      No orders yet.
+    </div>
+
+    <div class="orders-grid" th:if="${!#lists.isEmpty(orders)}">
+
+      <div class="order-card" th:each="o : ${orders}"
+           th:with="orderItems=${itemsByOrder[o.id]}">
+
+        top row
+        <div class="order-top">
+          <div class="order-title">
+            <div class="order-id">Order #<span th:text="${o.id}">0</span></div>
+            <div class="muted">
+              <span th:text="${o.restaurant.name}">Restaurant</span>
+              <span th:if="${o.city != null and !#strings.isEmpty(o.city)}"
+                    th:text="' • ' + ${o.city}"> • City</span>
+            </div>
+          </div>
+
+          <div class="order-badges">
+            Status pill
+            <span class="pill"
+                  th:classappend="' status-' + ${#strings.toLowerCase(o.status.name())}"
+                  th:text="${o.status}">
+              CREATED
+            </span>
+
+            Payment pill
+            <span class="pill"
+                  th:classappend="' pay-' + ${#strings.toLowerCase(o.paymentStatus.name())}"
+                  th:text="${o.paymentStatus}">
+              PENDING
+            </span>
+          </div>
+        </div>
+
+        <div class="order-mid">
+          <div class="order-total">
+            <div class="muted">Total</div>
+            <div class="total-value">₹<span th:text="${o.totalAmount}">0</span></div>
+          </div>
+
+          <div class="order-items-preview">
+            <div class="muted" style="margin-bottom:6px;">
+              Items
+              <span th:if="${orderItems != null}"
+                    th:text="'(' + ${#lists.size(orderItems)} + ')'"></span>
+            </div>
+
+            <div class="items-chips" th:if="${orderItems != null}">
+              <span class="item-chip"
+                    th:each="it,st : ${orderItems}"
+                    th:if="${st.index < 3}"
+                    th:text="${it.foodName + ' × ' + it.quantity}">
+                Item × 1
+              </span>
+
+              <span class="item-chip muted"
+                    th:if="${orderItems != null and #lists.size(orderItems) > 3}"
+                    th:text="'+' + (${#lists.size(orderItems)} - 3) + ' more'">
+                + more
+              </span>
+            </div>
+
+            <div class="muted" th:if="${orderItems == null}" style="margin-top:6px;">
+              Items not found.
+            </div>
+          </div>
+        </div>
+
+        <div class="order-actions">
+          <a class="btn btn-outline" th:href="@{/orders/{id}(id=${o.id})}">View</a>
+
+          <a class="btn btn-solid"
+             th:if="${o.status.name() == 'OUT_FOR_DELIVERY'}"
+             th:href="@{/track/{id}(id=${o.id})}">
+            Track Live
+          </a>
+
+          <a class="btn btn-solid"
+             th:if="${o.paymentStatus.name() != 'PAID'
+                     and (o.paymentMethod == null or o.paymentMethod.name() != 'COD')
+                     and o.status.name() != 'CANCELLED'
+                     and o.status.name() != 'DELIVERED'}"
+             th:href="@{/payment/{id}(id=${o.id})}">
+            Pay Now
+          </a>
+
+          <a class="btn btn-outline"
+             th:href="@{/invoice/{id}(id=${o.id})}">
+            Invoice
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html> <!-- 
+ -->
+<!-- FILE: src/main/resources/templates/orders.html
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Orders</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: appNavbar}"></div>
+
+<div class="section">
+  <div class="orders-head">
+    <div>
+      <h2 style="margin-bottom:6px;">My Orders</h2>
+      <div class="muted">Hotel name, ordered items, price and date — all in one place.</div>
+    </div>
+    <a class="btn btn-outline" th:href="@{/}">Continue Browsing</a>
+  </div>
+
+  <div class="muted" th:if="${#lists.isEmpty(orders)}" style="margin-top:12px;">
+    No orders yet.
+  </div>
+
+  <div class="orders-grid-real" th:if="${!#lists.isEmpty(orders)}">
+
+    <div class="order-card-real"
+         th:each="o : ${orders}"
+         th:with="
+            orderItems=${itemsByOrder[o.id]},
+            rImg=${(o.restaurant.imageUrl != null and !#strings.isEmpty(o.restaurant.imageUrl))
+                ? (#strings.startsWith(o.restaurant.imageUrl,'/') ? o.restaurant.imageUrl : '/' + o.restaurant.imageUrl)
+                : '/images/default-restaurant.jpg'}
+         ">
+
+      Top: Hotel + Date
+      <div class="order-top-real">
+        <div class="hotel">
+          <img class="hotel-img" th:src="${rImg}" alt="Hotel">
+          <div>
+            <div class="hotel-name" th:text="${o.restaurant.name}">Hotel Name</div>
+            <div class="muted">
+              Order #<b th:text="${o.id}">0</b>
+              <span th:if="${o.city != null and !#strings.isEmpty(o.city)}"
+                    th:text="' • ' + ${o.city}"> • City</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="top-right">
+          <div class="muted">Placed on</div>
+          <div class="date" th:text="${#temporals.format(o.createdAt, 'dd MMM yyyy, hh:mm a')}">
+            01 Jan 2026, 10:20 AM
+          </div>
+
+          <div class="pill-row">
+            <span class="pill"
+                  th:classappend="' status-' + ${#strings.toLowerCase(o.status.name())}"
+                  th:text="${o.status}">CREATED</span>
+
+            <span class="pill"
+                  th:classappend="' pay-' + ${#strings.toLowerCase(o.paymentStatus.name())}"
+                  th:text="${o.paymentStatus}">PENDING</span>
+          </div>
+        </div>
+      </div>
+
+      Items (Food name + qty + price)
+      <div class="items-table">
+        <div class="items-head">
+          <div>Food Item</div>
+          <div class="right">Qty</div>
+          <div class="right">Price</div>
+          <div class="right">Total</div>
+        </div>
+
+        <div class="items-row" th:if="${orderItems != null}" th:each="it,st : ${orderItems}" th:if="${st.index < 3}">
+          <div class="iname" th:text="${it.foodName}">Chicken</div>
+          <div class="right" th:text="${it.quantity}">1</div>
+          <div class="right">₹<span th:text="${it.unitPrice}">0</span></div>
+          <div class="right">₹<b th:text="${it.lineTotal}">0</b></div>
+        </div>
+
+        <div class="muted" th:if="${orderItems == null or #lists.isEmpty(orderItems)}" style="margin-top:8px;">
+          No items found for this order.
+        </div>
+
+        Expand (if more than 3 items)
+        <details class="items-more-real" th:if="${orderItems != null and #lists.size(orderItems) > 3}">
+          <summary class="muted">View all items</summary>
+          <div class="items-row" th:each="it,st : ${orderItems}" th:if="${st.index >= 3}">
+            <div class="iname" th:text="${it.foodName}">Item</div>
+            <div class="right" th:text="${it.quantity}">1</div>
+            <div class="right">₹<span th:text="${it.unitPrice}">0</span></div>
+            <div class="right">₹<b th:text="${it.lineTotal}">0</b></div>
+          </div>
+        </details>
+      </div>
+
+      Footer: Total + Actions
+      <div class="order-foot-real">
+        <div class="grand">
+          <div class="muted">Grand Total</div>
+          <div class="grand-amt">₹<span th:text="${o.totalAmount}">0</span></div>
+        </div>
+
+        <div class="order-actions-real">
+          <a class="btn btn-solid" th:href="@{/orders/{id}(id=${o.id})}">View Order</a>
+          <a class="btn btn-outline" th:href="@{/invoice/{id}(id=${o.id})}">Invoice</a>
+
+          <a class="btn btn-solid"
+             th:if="${o.status.name() == 'OUT_FOR_DELIVERY'}"
+             th:href="@{/track/{id}(id=${o.id})}">
+            Track Live
+          </a>
+
+          <a class="btn btn-solid"
+             th:if="${o.paymentStatus.name() != 'PAID'
+                     and (o.paymentMethod == null or o.paymentMethod.name() != 'COD')
+                     and o.status.name() != 'CANCELLED'
+                     and o.status.name() != 'DELIVERED'}"
+             th:href="@{/payment/{id}(id=${o.id})}">
+            Pay Now
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html> --> 
+
+
+
+
+<!-- FILE: src/main/resources/templates/orders.html -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Orders</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="home-bg">
+
+<div th:replace="~{fragments/navbar :: appNavbar}"></div>
+
+<div class="section">
+  <div class="orders-head">
+    <div>
+      <h2 style="margin-bottom:6px;">My Orders</h2>
+      <div class="muted">Hotel name, ordered items, price and date — all in one place.</div>
+    </div>
+    <a class="btn btn-outline" th:href="@{/}">Continue Browsing</a>
+  </div>
+
+  <div class="muted" th:if="${#lists.isEmpty(orders)}" style="margin-top:12px;">
+    No orders yet.
+  </div>
+
+  <div class="orders-grid-real" th:if="${!#lists.isEmpty(orders)}">
+
+    <div class="order-card-real"
+         th:each="o : ${orders}"
+         th:with="
+            orderItems=${itemsByOrder[o.id]},
+            rImg=${(o.restaurant.imageUrl != null and !#strings.isEmpty(o.restaurant.imageUrl))
+                ? (#strings.startsWith(o.restaurant.imageUrl,'/') ? o.restaurant.imageUrl : '/' + o.restaurant.imageUrl)
+                : '/images/default-restaurant.jpg'}
+         ">
+
+      <!-- Top: Hotel + Date -->
+      <div class="order-top-real">
+        <div class="hotel">
+          <img class="hotel-img" th:src="${rImg}" alt="Hotel">
+          <div>
+            <div class="hotel-name" th:text="${o.restaurant.name}">Hotel Name</div>
+            <div class="muted">
+              Order #<b th:text="${o.id}">0</b>
+              <span th:if="${o.city != null and !#strings.isEmpty(o.city)}"
+                    th:text="' • ' + ${o.city}"> • City</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="top-right">
+          <div class="muted">Placed on</div>
+          <div class="date" th:text="${#temporals.format(o.createdAt, 'dd MMM yyyy, hh:mm a')}">
+            01 Jan 2026, 10:20 AM
+          </div>
+
+         <!--  <div class="pill-row">
+            <span class="pill"
+                  th:classappend="' status-' + ${#strings.toLowerCase(o.status.name())}"
+                  th:text="${o.status}">CREATED</span>
+
+            <span class="pill"
+                  th:classappend="' pay-' + ${#strings.toLowerCase(o.paymentStatus.name())}"
+                  th:text="${o.paymentStatus}">PENDING</span>
+          </div> -->
+        </div>
+      </div>
+
+      <!-- Items (Food name + qty + price) -->
+      <div class="items-table">
+        <div class="items-head">
+          <div>Food Item</div>
+          <div class="right">Qty</div>
+          <div class="right">Price</div>
+          <div class="right">Total</div>
+        </div>
+
+        <!-- First 3 items preview -->
+        <th:block th:if="${orderItems != null}">
+          <th:block th:each="it,st : ${orderItems}">
+            <div class="items-row" th:if="${st.index < 3}">
+              <div class="iname" th:text="${it.foodName}">Chicken</div>
+              <div class="right" th:text="${it.quantity}">1</div>
+              <div class="right">₹<span th:text="${it.unitPrice}">0</span></div>
+              <div class="right">₹<b th:text="${it.lineTotal}">0</b></div>
+            </div>
+          </th:block>
+        </th:block>
+
+        <div class="muted" th:if="${orderItems == null or #lists.isEmpty(orderItems)}" style="margin-top:8px;">
+          No items found for this order.
+        </div>
+
+        <!-- Expand (if more than 3 items) -->
+        <details class="items-more-real" th:if="${orderItems != null and #lists.size(orderItems) > 3}">
+          <summary class="muted">View all items</summary>
+
+          <th:block th:each="it,st : ${orderItems}">
+            <div class="items-row" th:if="${st.index >= 3}">
+              <div class="iname" th:text="${it.foodName}">Item</div>
+              <div class="right" th:text="${it.quantity}">1</div>
+              <div class="right">₹<span th:text="${it.unitPrice}">0</span></div>
+              <div class="right">₹<b th:text="${it.lineTotal}">0</b></div>
+            </div>
+          </th:block>
+        </details>
+      </div>
+
+      <!-- Footer: Total + Actions -->
+      <div class="order-foot-real">
+        <div class="grand">
+          <div class="muted">Grand Total</div>
+          <div class="grand-amt">₹<span th:text="${o.totalAmount}">0</span></div>
+        </div>
+
+        <div class="order-actions-real">
+          <a class="btn btn-solid" th:href="@{/orders/{id}(id=${o.id})}">View Order</a>
+          <a class="btn btn-outline" th:href="@{/invoice/{id}(id=${o.id})}">Invoice</a>
+
+          <a class="btn btn-solid"
+             th:if="${o.status.name() == 'OUT_FOR_DELIVERY'}"
+             th:href="@{/track/{id}(id=${o.id})}">
+            Track Live
+          </a>
+
+          <a class="btn btn-solid"
+             th:if="${o.paymentStatus.name() != 'PAID'
+                     and (o.paymentMethod == null or o.paymentMethod.name() != 'COD')
+                     and o.status.name() != 'CANCELLED'
+                     and o.status.name() != 'DELIVERED'}"
+             th:href="@{/payment/{id}(id=${o.id})}">
+            Pay Now
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

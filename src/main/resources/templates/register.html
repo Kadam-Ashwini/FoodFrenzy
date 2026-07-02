@@ -1,0 +1,281 @@
+<!-- <!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <h2>Create Account</h2>
+
+      <p class="error" th:if="${error}" th:text="${error}"></p>
+
+      <form method="post" th:action="@{/register}">
+        <input name="fullName" type="text" placeholder="Full Name" required />
+        <input name="email" type="email" placeholder="Email" required />
+        <input name="phone" type="text" placeholder="Phone" required />
+        <input name="password" type="password" placeholder="Password" required />
+        <button class="btn btn-solid w100" type="submit">Register</button>
+      </form>
+
+      <p class="small">
+        Already have account? <a th:href="@{/login}">Login</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html> -->
+
+
+<!-- 
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create Account</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="auth-page">
+
+  Top bar
+  <div class="auth-top">
+    <a class="brand" th:href="@{/}">
+      <img th:src="@{/images/logo.png}" alt="Logo">
+      <span>FoodFrenzy</span>
+    </a>
+    <a class="btn btn-outline" th:href="@{/}">Home</a>
+  </div>
+
+  <div class="auth-shell">
+    Left side
+    <div class="auth-left">
+      <h1>Create your account</h1>
+      <p>Register to order food, track deliveries, and join group orders.</p>
+
+      Optional image (add this file to static): /images/auth/register-banner.png
+      <img class="auth-illustration"
+           th:src="@{/images/login-banner.png}"
+           alt="Register banner"
+           onerror="this.style.display='none'">
+    </div>
+
+    Right side (form)
+    <div class="auth-right">
+      <div class="auth-card2">
+        <h2>Create Account</h2>
+
+        <p class="error" th:if="${error}" th:text="${error}"></p>
+
+        <form method="post" th:action="@{/register}" class="auth-form2">
+
+          <div class="field">
+            <label>Full Name</label>
+            <input name="fullName" type="text" placeholder="Enter your full name" required />
+          </div>
+
+          <div class="field">
+            <label>Email</label>
+            <input name="email" type="email" placeholder="Enter your email" required />
+          </div>
+
+          <div class="field">
+            <label>Phone</label>
+            <input name="phone" type="text" placeholder="Enter your phone number" required />
+          </div>
+
+          <div class="field">
+            <label>Password</label>
+            <div class="pass-wrap">
+              <input id="pwd2" name="password" type="password" placeholder="Create a password" required />
+              <button class="pass-toggle" type="button" onclick="togglePwd2()">Show</button>
+            </div>
+          </div>
+
+          <button class="btn btn-solid w100" type="submit">Register</button>
+        </form>
+
+        <div class="auth-links">
+          <span class="muted">Already have an account?</span>
+          <a th:href="@{/login}">Login</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  function togglePwd2(){
+    const el = document.getElementById('pwd2');
+    const btn = document.querySelector('.pass-toggle');
+    if(el.type === 'password'){
+      el.type = 'text';
+      btn.innerText = 'Hide';
+    } else {
+      el.type = 'password';
+      btn.innerText = 'Show';
+    }
+  }
+</script>
+
+</body>
+</html> -->
+
+
+<!-- FILE: src/main/resources/templates/register.html -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create Account</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="auth-page">
+
+  <!-- Top bar -->
+  <div class="auth-top">
+    <a class="brand" th:href="@{/}">
+      <img th:src="@{/images/logo.png}" alt="Logo">
+      <span>FoodFrenzy</span>
+    </a>
+    <a class="btn btn-outline" th:href="@{/}">Home</a>
+  </div>
+
+  <div class="auth-shell">
+    <!-- Left side -->
+    <div class="auth-left">
+      <h1>Create your account</h1>
+      <p>Register to order food, track deliveries, and join group orders.</p>
+
+      <img class="auth-illustration"
+           th:src="@{/images/login-banner.png}"
+           alt="Register banner"
+           onerror="this.style.display='none'">
+    </div>
+
+    <!-- Right side -->
+    <div class="auth-right">
+      <div class="auth-card2">
+        <h2>Create Account</h2>
+
+        <p class="error" th:if="${error}" th:text="${error}"></p>
+
+        <!-- ✅ HTML-only validation -->
+        <form method="post" th:action="@{/register}" class="auth-form2" autocomplete="on">
+
+          <!-- Full Name -->
+          <div class="field">
+            <label for="fullName">Full Name</label>
+            <input
+              id="fullName"
+              name="fullName"
+              type="text"
+              placeholder="Enter your full name"
+              required
+              minlength="3"
+              maxlength="80"
+              pattern="[A-Za-z][A-Za-z ]{2,79}"
+              title="Name must contain only letters and spaces (min 3 characters)."
+              oninvalid="this.setCustomValidity('Please enter a valid full name (letters/spaces only, min 3 chars)')"
+              oninput="this.setCustomValidity('')"
+              autocomplete="name"
+            />
+            <div class="muted" style="margin-top:6px;">Only letters and spaces (min 3 characters)</div>
+          </div>
+
+          <!-- Email -->
+          <div class="field">
+            <label for="email">Email</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="Enter your email"
+              required
+              maxlength="120"
+              inputmode="email"
+              autocapitalize="none"
+              spellcheck="false"
+              autocomplete="email"
+              oninvalid="this.setCustomValidity('Please enter a valid email address')"
+              oninput="this.setCustomValidity('')"
+            />
+            <div class="muted" style="margin-top:6px;">Example: user@gmail.com</div>
+          </div>
+
+          <!-- Phone -->
+          <div class="field">
+            <label for="phone">Phone</label>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              placeholder="10-digit mobile number"
+              required
+              inputmode="numeric"
+              pattern="[6-9][0-9]{9}"
+              minlength="10"
+              maxlength="10"
+              title="Enter a valid 10-digit Indian mobile number starting with 6-9."
+              oninvalid="this.setCustomValidity('Enter 10-digit mobile number starting with 6-9')"
+              oninput="this.value=this.value.replace(/[^0-9]/g,''); this.setCustomValidity('')"
+              autocomplete="tel"
+            />
+            <div class="muted" style="margin-top:6px;">Must be 10 digits, starts with 6/7/8/9</div>
+          </div>
+
+          <!-- Password -->
+          <div class="field">
+            <label for="pwd2">Password</label>
+            <div class="pass-wrap">
+              <input
+                id="pwd2"
+                name="password"
+                type="password"
+                placeholder="Create a password"
+                required
+                minlength="6"
+                maxlength="60"
+                pattern="(?=.*[A-Za-z])(?=.*\d).{6,}"
+                title="Password must be at least 6 characters and contain at least 1 letter and 1 number."
+                oninvalid="this.setCustomValidity('Password must be at least 6 characters and contain at least 1 letter and 1 number')"
+                oninput="this.setCustomValidity('')"
+                autocomplete="new-password"
+              />
+              <button class="pass-toggle" type="button" onclick="togglePwd2()">Show</button>
+            </div>
+            <div class="muted" style="margin-top:6px;">Min 6 chars, must contain 1 letter + 1 number</div>
+          </div>
+
+          <button class="btn btn-solid w100" type="submit">Register</button>
+        </form>
+
+        <div class="auth-links">
+          <span class="muted">Already have an account?</span>
+          <a th:href="@{/login}">Login</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+<script>
+  function togglePwd2(){
+    const el = document.getElementById('pwd2');
+    const btn = document.querySelector('.pass-toggle');
+    if(el.type === 'password'){
+      el.type = 'text';
+      btn.innerText = 'Hide';
+    } else {
+      el.type = 'password';
+      btn.innerText = 'Show';
+    }
+  }
+</script>
+
+</body>
+</html>

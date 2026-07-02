@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="'Invoice - Order #' + ${order.id}">Invoice</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body class="invoice-page home-bg">
+
+  <div class="invoice-wrap">
+    <div class="invoice-top">
+      <div>
+        <div class="invoice-brand">
+          <img th:src="@{/images/logo.png}" alt="Logo">
+          <div>
+            <div class="invoice-title">FoodFrenzy</div>
+            <div class="muted">Order Invoice</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="invoice-actions noprint">
+        <a class="btn btn-outline" th:href="@{/orders/{id}(id=${order.id})}">Back</a>
+        <button class="btn btn-solid" onclick="window.print()">Print / Save PDF</button>
+      </div>
+    </div>
+
+    <hr class="hr">
+
+    <div class="invoice-grid">
+      <div class="panel">
+        <h3>Invoice Details</h3>
+        <div class="order-meta">
+          <div>Invoice For Order: <b th:text="${order.id}">0</b></div>
+          <div>Date: <b th:text="${#temporals.format(order.createdAt, 'dd-MM-yyyy HH:mm')}">-</b></div>
+          <div>Status: <span class="badge" th:text="${order.status}">-</span></div>
+          <div>Total: ₹<b th:text="${order.totalAmount}">0</b></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Customer</h3>
+        <div class="order-meta">
+          <div>Name: <b th:text="${order.user.fullName}">-</b></div>
+          <div>Email: <b th:text="${order.user.email}">-</b></div>
+          <div>Delivery City: <b th:text="${order.city}">-</b></div>
+          <div>Address: <b th:text="${order.deliveryAddress}">-</b></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Restaurant</h3>
+        <div class="order-meta">
+          <div>Name: <b th:text="${order.restaurant.name}">-</b></div>
+          <div>City: <b th:text="${order.restaurant.city}">-</b></div>
+          <div th:if="${order.restaurant.area != null}">Area: <b th:text="${order.restaurant.area}">-</b></div>
+          <div th:if="${order.restaurant.address != null}">Address: <b th:text="${order.restaurant.address}">-</b></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Payment</h3>
+        <div class="order-meta">
+          <div>Status: <b th:text="${order.paymentStatus}">-</b></div>
+          <div th:if="${order.paymentMethod != null}">Method: <b th:text="${order.paymentMethod}">-</b></div>
+          <div th:if="${order.paymentRef != null}">Latest Ref: <b th:text="${order.paymentRef}">-</b></div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="hr">
+
+    <h3>Items</h3>
+
+    <div class="table">
+      <div class="trow thead" style="grid-template-columns: 1.8fr 140px 140px 160px;">
+        <div>Item</div>
+        <div>Qty</div>
+        <div>Unit Price</div>
+        <div>Total</div>
+      </div>
+
+      <div class="trow" th:each="i : ${items}" style="grid-template-columns: 1.8fr 140px 140px 160px;">
+        <div>
+          <b th:text="${i.foodName}">Food</b>
+          <div class="muted" th:text="${i.category + ' • ' + (i.veg ? 'Veg' : 'Non-Veg')}">meta</div>
+        </div>
+        <div th:text="${i.quantity}">1</div>
+        <div>₹<b th:text="${i.unitPrice}">0</b></div>
+        <div>₹<b th:text="${i.lineTotal}">0</b></div>
+      </div>
+    </div>
+
+    <div class="invoice-total">
+      <span>Total Amount</span>
+      <span>₹<b th:text="${order.totalAmount}">0</b></span>
+    </div>
+
+    <hr class="hr">
+
+    <h3>Payment History</h3>
+    <div class="muted" th:if="${#lists.isEmpty(txns)}">No payment attempts.</div>
+
+    <div class="table" th:if="${!#lists.isEmpty(txns)}">
+      <div class="trow thead" style="grid-template-columns: 1.6fr 140px 140px;">
+        <div>Info</div>
+        <div>Status</div>
+        <div>Amount</div>
+      </div>
+
+      <div class="trow" th:each="t : ${txns}" style="grid-template-columns: 1.6fr 140px 140px;">
+        <div>
+          <b th:text="${t.method}">UPI</b>
+          <div class="muted" th:text="${#temporals.format(t.createdAt, 'dd-MM-yyyy HH:mm')}">time</div>
+          <div class="muted" th:if="${t.ref != null}" th:text="'Ref: ' + ${t.ref}">ref</div>
+          <div class="muted" th:if="${t.message != null}" th:text="${t.message}">msg</div>
+        </div>
+        <div><span class="badge" th:text="${t.status}">PAID</span></div>
+        <div>₹<b th:text="${t.amount}">0</b></div>
+      </div>
+    </div>
+
+    <div class="muted" style="margin-top:12px;">
+      Note: Use “Print / Save PDF” to download invoice as PDF.
+    </div>
+  </div>
+
+</body>
+</html>
