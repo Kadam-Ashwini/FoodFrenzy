@@ -150,8 +150,9 @@ http://localhost:8088
 ![Cart](src/main/resources/static/images/screenshots/cart.png)
 ![Checkout](src/main/resources/static/images/screenshots/payment.png)
 
-###Feedback
+### Feedback
 ![FeedBack](src/main/resources/static/images/screenshots/feedback.png)
+
 ## 👥 Stakeholders
 
 | Role | Responsibilities |
