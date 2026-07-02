@@ -138,6 +138,24 @@ http://localhost:8088
 
 ## 📸 Screenshots
 
+## 📸 Screenshots
+
+### Home Page
+![Home Page](screenshots/dashboard.png)
+
+### Login
+![Login](screenshots/login.png)
+
+### Admin Dashboard
+![Admin Dashboard](screenshots/admin-dashboard.png)
+
+### Cart & Checkout
+![Cart](screenshots/cart.png)
+![Checkout](screenshots/checkout.png)
+
+### Order Tracking
+![Live Tracking](screenshots/order-tracking.png)
+
 
 ## 👥 Stakeholders
 
