@@ -186,18 +186,6 @@ http://localhost:8088
 
 ---
 
-## 📚 References
-
-- Sommerville, I. — *Software Engineering* (10th ed.), Pearson Education
-- Silberschatz, Korth & Sudarshan — *Database System Concepts*
-- Grinberg, M. — *Flask Web Development*
-- Tahaghoghi & Williams — *Learning MySQL*
-- Robson & Freeman — *Head First HTML and CSS*
-- [Spring Boot Documentation](https://docs.spring.io/spring-boot/)
-- [MySQL Documentation](https://dev.mysql.com/doc/)
-- [MDN Web Docs](https://developer.mozilla.org/)
-
----
 
 ## 👩‍💻 Author
 
